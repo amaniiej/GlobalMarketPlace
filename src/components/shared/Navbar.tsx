@@ -1,55 +1,46 @@
+'use client';
+
+import Link from 'next/link';
+
+import { Button } from '@/components/ui/button';
+
 export function Navbar() {
+    const navItems = [
+        { name: 'Home', href: '/' },
+        { name: 'Services', href: '#services' },
+        { name: 'Prices', href: '/prices' },
+        { name: 'Blog', href: '/blog' },
+        { name: 'About Us', href: '#about' },
+        { name: 'Contact', href: '#contact' }
+    ];
+
     return (
-        <nav
-            style={{
-                backgroundColor: 'white',
-                padding: '1rem',
-                borderBottom: '1px solid #e5e7eb'
-            }}>
-            <div
-                style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    maxWidth: '1200px',
-                    margin: '0 auto'
-                }}>
+        <nav className='sticky top-0 z-50 border-b bg-white'>
+            <div className='container mx-auto flex h-16 items-center justify-between px-4'>
                 {/* Logo */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <div
-                        style={{
-                            width: '40px',
-                            height: '40px',
-                            backgroundColor: 'green',
-                            borderRadius: '8px'
-                        }}></div>
-                    <span style={{ fontWeight: 'bold', fontSize: '1.25rem' }}>AGROSPACE</span>
+                <div className='flex items-center gap-3'>
+                    <div className='h-10 w-10 rounded-lg bg-green-600' />
+                    <div>
+                        <div className='text-xl font-bold text-gray-900'>AGROSPACE</div>
+                        <div className='text-sm text-gray-500'>Ethiopian Agricultural Export</div>
+                    </div>
                 </div>
 
-                {/* Links */}
-                <div style={{ display: 'flex', gap: '2rem' }}>
-                    <a href='/' style={{ color: 'black' }}>
-                        Home
-                    </a>
-                    <a href='/prices' style={{ color: 'black' }}>
-                        Prices
-                    </a>
-                    <a href='/blog' style={{ color: 'black' }}>
-                        Blog
-                    </a>
+                {/* Navigation Links */}
+                <div className='hidden items-center gap-8 md:flex'>
+                    {navItems.map((item) => (
+                        <Link key={item.name} href={item.href} className='text-gray-700 hover:text-green-600'>
+                            {item.name}
+                        </Link>
+                    ))}
                 </div>
 
-                {/* Button */}
-                <button
-                    style={{
-                        backgroundColor: 'green',
-                        color: 'white',
-                        padding: '0.5rem 1rem',
-                        border: 'none',
-                        borderRadius: '4px'
-                    }}>
-                    Order Now
-                </button>
+                {/* Order Now Button */}
+                <Button className='bg-green-600 hover:bg-green-700'>
+                    <Link href='https://tally.so' target='_blank'>
+                        Order Now
+                    </Link>
+                </Button>
             </div>
         </nav>
     );

@@ -1,12 +1,16 @@
-import HomePage from '@/app/(delete-this-and-modify-page.tsx)/HomePage';
+// src/app/page.tsx
+import { ContactSection } from './ContactSection';
+import { HeroSection } from './HeroSection';
+import { Services } from './Services';
+import { WhoWeAre } from './WhoWeAre';
 
-/**
- * The main page component that renders the HomePage component.
- *
- * @returns {JSX.Element} The rendered HomePage component.
- */
-const Page = () => {
-    return <HomePage />;
-};
-
-export default Page;
+export default function Home() {
+    return (
+        <main>
+            <HeroSection />
+            <WhoWeAre />
+            <Services />
+            <ContactSection />
+        </main>
+    );
+}
