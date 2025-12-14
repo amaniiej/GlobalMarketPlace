@@ -60,6 +60,9 @@ export function ChartLineDotsCustom() {
                             strokeWidth={2}
                             dot={({ cx, cy, payload }) => {
                                 const r = 24;
+                                 if (cx == null || cy == null) {
+                                  return null
+                                }
 
                                 return (
                                     <GitCommitVertical
