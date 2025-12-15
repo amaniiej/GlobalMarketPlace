@@ -1,9 +1,6 @@
-// src/app/contact-section.tsx
 'use client';
 
 import { useState } from 'react';
-
-// src/app/contact-section.tsx
 
 export function ContactSection() {
     const [formData, setFormData] = useState({
@@ -16,7 +13,6 @@ export function ContactSection() {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // For now, just log to console
         console.log('Form submitted:', formData);
         alert("Message sent! We'll contact you soon.");
     };
@@ -29,9 +25,9 @@ export function ContactSection() {
     };
 
     return (
-        <section className='bg-white py-16'>
+        <section id='contact' className='bg-white py-16'>
             <div className='container mx-auto px-4'>
-                <div className='mx-auto max-w-4xl'>
+                <div className='mx-auto max-w-2xl'>
                     <div className='mb-12 text-center'>
                         <h2 className='mb-4 text-4xl font-bold text-gray-900'>Send Us a Message</h2>
                         <p className='text-xl text-gray-600'>
@@ -114,25 +110,6 @@ export function ContactSection() {
                             <p className='mt-4 text-sm text-gray-500'>We typically respond within 24 hours.</p>
                         </div>
                     </form>
-
-                    {/* Contact Info */}
-                    <div className='mt-12 grid grid-cols-1 gap-8 text-center md:grid-cols-3'>
-                        <div>
-                            <div className='mb-2 text-2xl'>📧</div>
-                            <h4 className='font-semibold'>Email</h4>
-                            <p className='text-gray-600'>contact@agrimarket.et</p>
-                        </div>
-                        <div>
-                            <div className='mb-2 text-2xl'>📱</div>
-                            <h4 className='font-semibold'>Phone</h4>
-                            <p className='text-gray-600'>+251 911 234 567</p>
-                        </div>
-                        <div>
-                            <div className='mb-2 text-2xl'>🏢</div>
-                            <h4 className='font-semibold'>Location</h4>
-                            <p className='text-gray-600'>Addis Ababa, Ethiopia</p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>

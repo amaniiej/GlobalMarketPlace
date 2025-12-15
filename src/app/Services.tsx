@@ -2,9 +2,8 @@
 export function Services() {
     const services = [
         {
-            title: 'Direct Farm Sourcing',
-            description:
-                'We work directly with Ethiopian farmers and cooperatives, cutting out middlemen to ensure better prices and quality control.',
+            title: 'Direct Product Sourcing',
+            description: 'We work directly with Ethiopian exporters, assuring proper pricing and quality control.',
             icon: '👨‍🌾'
         },
         {
@@ -31,9 +30,10 @@ export function Services() {
         <section className='bg-gray-50 py-16'>
             <div className='container mx-auto px-4'>
                 <div className='mb-12 text-center'>
-                    <h2 className='mb-4 text-4xl font-bold text-gray-900'>Our Complete Service Package</h2>
+                    <h2 className='mb-4 text-4xl font-bold text-gray-900'>Our Service - What We Do for You</h2>
                     <p className='mx-auto max-w-3xl text-xl text-gray-600'>
-                        From farm to port, we handle every detail so you can focus on your business
+                        From our list of trusted exporters, we find you the exact agricultural product you are looking
+                        for.
                     </p>
                 </div>
 

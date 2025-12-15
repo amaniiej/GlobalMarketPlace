@@ -7,9 +7,9 @@ import { Button } from '@/components/ui/button';
 export function Navbar() {
     const navItems = [
         { name: 'Home', href: '/' },
-        { name: 'Services', href: '#services' },
-        { name: 'Prices', href: '/prices' },
-        { name: 'Blog', href: '/blog' },
+        { name: 'What We Do', href: '#services' },
+        { name: 'Blog Posts', href: '/blog' },
+        { name: 'Price Updates', href: '/pricesUpdates' },
         { name: 'About Us', href: '#about' },
         { name: 'Contact', href: '#contact' }
     ];
@@ -37,7 +37,7 @@ export function Navbar() {
 
                 {/* Order Now Button */}
                 <Button className='bg-green-600 hover:bg-green-700'>
-                    <Link href='https://tally.so' target='_blank'>
+                    <Link href='https://tally.so/r/Y5Pl2z' target='_blank'>
                         Order Now
                     </Link>
                 </Button>
