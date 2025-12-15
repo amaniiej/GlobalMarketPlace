@@ -9,7 +9,7 @@ export function Navbar() {
         { name: 'Home', href: '/' },
         { name: 'What We Do', href: '#services' },
         { name: 'Blog Posts', href: '/blog' },
-        { name: 'Price Updates', href: '/pricesUpdates' },
+        { name: 'Price Updates', href: '/prices' },
         { name: 'About Us', href: '#about' },
         { name: 'Contact', href: '#contact' }
     ];
