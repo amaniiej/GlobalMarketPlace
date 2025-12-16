@@ -1,47 +1,90 @@
 'use client';
 
+import { useEffect, useRef, useState } from 'react';
+
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 
-export function Navbar() {
-    const navItems = [
-        { name: 'Home', href: '/' },
-        { name: 'What We Do', href: './#services' },
-        { name: 'Blog Posts', href: '/blog' },
-        { name: 'Price Updates', href: '/prices' },
-        { name: 'About Us', href: './#about' },
-        { name: 'Contact', href: './#contact' }
+const Navbar = () => {
+    const [isVisible, setIsVisible] = useState(true);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const lastScrollY = useRef(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+
+            // Update scrolled state for styling
+            setIsScrolled(currentScrollY > 10);
+
+            // Show/hide logic
+            if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
+                // Scrolling DOWN and past 100px → hide
+                setIsVisible(false);
+            } else if (currentScrollY < lastScrollY.current) {
+                // Scrolling UP → show
+                setIsVisible(true);
+            }
+
+            lastScrollY.current = currentScrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    const menuItems = [
+        { title: 'Services', url: '/#services' },
+        { title: 'Market Prices', url: '/prices' },
+        { title: 'Blog', url: '/blog' },
+        { title: 'About Us', url: '/#about' },
+        { title: 'Contact', url: '/#contact' }
     ];
 
     return (
-        <nav className='sticky top-0 z-50 border-b bg-white'>
-            <div className='container mx-auto flex h-16 items-center justify-between px-4'>
-                {/* Logo */}
-                <div className='flex items-center gap-3'>
-                    <div className='h-10 w-10 rounded-lg bg-green-600' />
-                    <div>
-                        <div className='text-xl font-bold text-gray-900'>AGROSPACE</div>
-                        <div className='text-sm text-gray-500'>Ethiopian Agricultural Export</div>
-                    </div>
+        <nav
+            className={`sticky top-0 z-50 w-full border-b border-gray-200/30 transition-all duration-400 ${
+                isScrolled ? 'bg-white/89 shadow-sm backdrop-blur-xl' : 'bg-white/89 backdrop-blur-lg'
+            } ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
+            style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}>
+            <div className='mx-auto flex h-15 max-w-7xl items-center px-4'>
+                {/* LEFT — Brand */}
+                <div className='flex flex-1 items-center justify-start'>
+                    <Link
+                        href='/'
+                        className='flex items-center gap-2 transition-transform duration-200 hover:scale-105'>
+                        <div className='h-8 w-8 rounded-lg bg-linear-to-br from-emerald-600 via-lime-500 to-orange-500' />
+                        <span className='text-lg font-semibold tracking-wider text-gray-900'>AGROSPACE</span>
+                    </Link>
                 </div>
 
-                {/* Navigation Links */}
-                <div className='hidden items-center gap-8 md:flex'>
-                    {navItems.map((item) => (
-                        <Link key={item.name} href={item.href} className='text-gray-700 hover:text-green-600'>
-                            {item.name}
+                {/* CENTER — Navigation */}
+                <div className='hidden flex-none items-center gap-9 md:flex'>
+                    {menuItems.map((item) => (
+                        <Link
+                            key={item.title}
+                            href={item.url}
+                            className='text-[0.95rem] font-medium tracking-wider text-gray-700 transition-transform duration-200 hover:scale-105 hover:text-emerald-700'>
+                            {item.title}
                         </Link>
                     ))}
                 </div>
 
-                {/* Order Now Button */}
-                <Button className='bg-green-600 hover:bg-green-700'>
-                    <Link href='https://tally.so/r/Y5Pl2z' target='_blank'>
-                        Order Now
-                    </Link>
-                </Button>
+                {/* RIGHT — CTA */}
+                <div className='flex flex-1 items-center justify-end'>
+                    <Button
+                        asChild
+                        className='inline-flex items-center rounded-full bg-[#0F3D2E] px-8 py-3 text-sm font-medium text-white transition-transform duration-200 hover:scale-105 hover:bg-[#115140]'>
+                        <a href='https://tally.so/r/Y5Pl2z' target='_blank' rel='noopener noreferrer'>
+                            Order Now
+                        </a>
+                    </Button>
+                </div>
             </div>
         </nav>
     );
-}
+};
+
+export default Navbar;
