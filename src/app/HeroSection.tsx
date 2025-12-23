@@ -3,10 +3,10 @@ import Image from 'next/image';
 export function HeroSection() {
     return (
         <section className='relative min-h-[85vh] overflow-hidden'>
-            {/* BACKGROUND IMAGE */}
+            {/* BACKGROUND IMAGE - NO OVERLAY */}
             <div className='absolute inset-0 z-0'>
                 <Image
-                    src='/images/hero-sec.jpg' // Path to your image
+                    src='/images/hero-coffee505.png' // Path to your image
                     alt='Ethiopian agricultural exports'
                     fill
                     className='object-cover'
@@ -14,9 +14,7 @@ export function HeroSection() {
                     quality={85}
                     sizes='100vw'
                 />
-
-                {/* Dark overlay for text readability */}
-                <div className='absolute inset-0 bg-black/40' />
+                {/* REMOVED: <div className='absolute inset-0 bg-black/40' /> */}
             </div>
 
             {/* CONTENT */}
@@ -44,8 +42,8 @@ export function HeroSection() {
                 </div>
             </div>
 
-            {/* Bottom fade */}
-            <div className='absolute right-0 bottom-0 left-0 h-24 bg-linear-to-t from-white to-transparent' />
+            {/* Bottom fade - 50% smaller */}
+            <div className='absolute right-0 bottom-0 left-0 h-12 bg-linear-to-t from-white to-transparent' />
         </section>
     );
 }
