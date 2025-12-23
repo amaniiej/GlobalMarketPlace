@@ -6,6 +6,12 @@
 
 /* Remove @custom-variant dark – not needed for standard dark mode */
 
+/* HELVETICA FONT FOR ENTIRE SITE */
+@theme {
+    --font-sans: 'Helvetica', 'Arial', sans-serif;
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+}
+
 /* 1) Raw CSS variables for light & dark */
 :root {
     --background: 0 0% 100%;
@@ -89,6 +95,7 @@
         margin: 0;
         padding: 0;
         border-color: hsl(var(--border));
+        font-family: 'Helvetica', 'Arial', sans-serif; /* Force Helvetica everywhere */
     }
 
     html,
@@ -96,11 +103,15 @@
         max-width: 100vw;
         overflow-x: hidden;
         width: 100%;
+        font-family: 'Helvetica', 'Arial', sans-serif; /* Double ensure */
     }
 
     body {
         background-color: hsl(var(--background));
         color: hsl(var(--foreground));
+        font-family: 'Helvetica', 'Arial', sans-serif; /* Triple ensure */
+        -webkit-font-smoothing: antialiased; /* Better rendering on Mac */
+        -moz-osx-font-smoothing: grayscale; /* Better rendering on Firefox */
     }
 
     /* Ensure containers stay within bounds */
@@ -111,5 +122,31 @@
     .max-w-5xl {
         width: 100%;
         max-width: 100%;
+    }
+
+    /* Override any other font classes that might sneak in */
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6,
+    p,
+    span,
+    a,
+    li,
+    button,
+    input,
+    textarea,
+    select,
+    label,
+    div,
+    section,
+    article,
+    header,
+    footer,
+    nav,
+    main {
+        font-family: 'Helvetica', 'Arial', sans-serif !important;
     }
 }

@@ -51,23 +51,24 @@ const Navbar = () => {
             } ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
             style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}>
             <div className='mx-auto flex h-15 max-w-7xl items-center px-4'>
-                {/* LEFT — Brand with Logo */}
+                {/* LEFT — Brand with Logo - EXTREMELY CLOSE */}
                 <div className='flex flex-1 items-center justify-start'>
-                    <Link
-                        href='/'
-                        className='flex items-center gap-2 transition-transform duration-200 hover:scale-105'>
-                        {/* Logo Image - REPLACES the green gradient */}
-                        <div className='relative h-8 w-8'>
+                    <Link href='/' className='flex items-center transition-transform duration-200 hover:scale-105'>
+                        {/* Logo Image - 15% larger from current 56px */}
+                        <div className='relative h-16 w-16'>
+                            {' '}
+                            {/* 15% increase: 56px × 1.15 = 64.4px → h-16 w-16 = 64px */}
                             <Image
                                 src='/images/logo-nav.png'
                                 alt='AGROSPACE Logo'
                                 fill
                                 className='object-contain'
-                                sizes='32px'
+                                sizes='64px'
                                 priority
                             />
                         </div>
-                        <span className='text-lg font-semibold tracking-wider text-gray-900'>AGROSPACE</span>
+                        {/* Brand name with NEGATIVE margin to pull it CLOSER */}
+                        <span className='-ml-2 text-lg font-semibold tracking-wider text-gray-900'>AGROSPACE</span>
                     </Link>
                 </div>
 
