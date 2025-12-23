@@ -1,12 +1,12 @@
-/* Remove the @theme block that contains :root - it's invalid */
-
 @import 'tailwindcss';
 
+/* Optional animation plugin if you actually use tailwindcss-animate */
+/* If you don't have it installed, delete this line */
 @plugin 'tailwindcss-animate';
 
-@custom-variant dark (&:is(.dark *));
+/* Remove @custom-variant dark – not needed for standard dark mode */
 
-/* Move your custom CSS variables OUTSIDE of @theme block */
+/* 1) Raw CSS variables for light & dark */
 :root {
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
@@ -52,7 +52,7 @@
     --ring: 142 72% 29%;
 }
 
-/* CORRECT @theme block - only contains mappings */
+/* 2) Tailwind v4 @theme: map CSS vars into tokens Tailwind can use */
 @theme {
     --color-background: var(--background);
     --color-foreground: var(--foreground);
@@ -80,8 +80,11 @@
     --radius-xl: calc(var(--radius) + 4px);
 }
 
+/* 3) Base styles */
 @layer base {
-    * {
+    *,
+    *::before,
+    *::after {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
