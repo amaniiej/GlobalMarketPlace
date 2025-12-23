@@ -25,7 +25,7 @@ export function HeroSection() {
                 <h1 className='max-w-3xl text-4xl leading-tight font-semibold md:text-5xl'>
                     Connecting Global Buyers with
                     <br />
-                    <span className='text-lime-300'>Trusted Ethiopian Exporters</span>
+                    <span className='text-lime-300'>Trusted Ethiopian Exporters - for stupid habeshas</span>
                 </h1>
 
                 {/* Sub-headline */}
