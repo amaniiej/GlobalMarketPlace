@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 
+import Image from 'next/image';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -50,12 +51,22 @@ const Navbar = () => {
             } ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
             style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}>
             <div className='mx-auto flex h-15 max-w-7xl items-center px-4'>
-                {/* LEFT — Brand */}
+                {/* LEFT — Brand with Logo */}
                 <div className='flex flex-1 items-center justify-start'>
                     <Link
                         href='/'
                         className='flex items-center gap-2 transition-transform duration-200 hover:scale-105'>
-                        <div className='h-8 w-8 rounded-lg bg-linear-to-br from-emerald-600 via-lime-500 to-orange-500' />
+                        {/* Logo Image - REPLACES the green gradient */}
+                        <div className='relative h-8 w-8'>
+                            <Image
+                                src='/images/logo-nav.png'
+                                alt='AGROSPACE Logo'
+                                fill
+                                className='object-contain'
+                                sizes='32px'
+                                priority
+                            />
+                        </div>
                         <span className='text-lg font-semibold tracking-wider text-gray-900'>AGROSPACE</span>
                     </Link>
                 </div>
