@@ -6,10 +6,12 @@ import { WhoWeWorkWith } from './WhoWeWorkWith';
 
 export default function Home() {
     return (
-        <main>
+        <main className='pt-14'>
+            {' '}
+            {/* ← Changed from pt-16 to pt-14 to match h-14 navbar */}
             <HeroSection />
             <WhoWeWorkWith />
-            <HowItWorks /> {/* ✅ Changed from second WhoWeWorkWith to HowItWorks */}
+            <HowItWorks />
             <ContactSection />
         </main>
     );

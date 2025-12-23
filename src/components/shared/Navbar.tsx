@@ -19,12 +19,12 @@ const Navbar = () => {
             // Update scrolled state for styling
             setIsScrolled(currentScrollY > 10);
 
-            // Show/hide logic
+            // Show/hide logic - FIXED VERSION
             if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
                 // Scrolling DOWN and past 100px → hide
                 setIsVisible(false);
-            } else if (currentScrollY < lastScrollY.current) {
-                // Scrolling UP → show
+            } else {
+                // Scrolling UP or at top → show
                 setIsVisible(true);
             }
 
@@ -32,6 +32,9 @@ const Navbar = () => {
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
+
+        // Initial check
+        handleScroll();
 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -46,11 +49,15 @@ const Navbar = () => {
 
     return (
         <nav
-            className={`sticky top-0 z-50 w-full border-b border-gray-200/30 transition-all duration-400 ${
-                isScrolled ? 'bg-white/89 shadow-sm backdrop-blur-xl' : 'bg-white/89 backdrop-blur-lg'
+            className={`fixed top-0 right-0 left-0 z-50 w-full border-b border-gray-200/30 transition-all duration-400 ${
+                isScrolled ? 'bg-white/70 shadow-sm backdrop-blur-xl' : 'bg-white/70 backdrop-blur-lg'
             } ${isVisible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0'}`}
-            style={{ transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)' }}>
-            <div className='mx-auto flex h-15 max-w-7xl items-center px-4'>
+            style={{
+                transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
+                backdropFilter: 'blur(10px)',
+                backgroundColor: 'rgba(255, 255, 255, 0.7)' // 70% transparency (35% + 35% = 70%)
+            }}>
+            <div className='mx-auto flex h-14 max-w-7xl items-center px-4'>
                 {/* LEFT — Brand with Logo - EXTREMELY CLOSE */}
                 <div className='flex flex-1 items-center justify-start'>
                     <Link href='/' className='flex items-center transition-transform duration-200 hover:scale-105'>
