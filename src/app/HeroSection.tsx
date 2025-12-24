@@ -29,7 +29,7 @@ export function HeroSection() {
                 {/* Sub-headline */}
                 <p className='mt-6 max-w-2xl text-lg leading-relaxed text-white/90'>
                     We source, verify, and personally match agricultural demand with active exporters — securely,
-                    transparently, and professionally.
+                    transparently, professionally.
                 </p>
 
                 {/* CTA */}

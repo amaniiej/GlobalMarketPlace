@@ -2,6 +2,7 @@
 import { ContactSection } from './ContactSection';
 import { HeroSection } from './HeroSection';
 import { HowItWorks } from './HowItWorks';
+import { TheProcess } from './TheProcess';
 import { WhoWeWorkWith } from './WhoWeWorkWith';
 
 export default function Home() {
@@ -10,6 +11,7 @@ export default function Home() {
             {' '}
             {/* ← Changed from pt-16 to pt-14 to match h-14 navbar */}
             <HeroSection />
+            <TheProcess />
             <WhoWeWorkWith />
             <HowItWorks />
             <ContactSection />
