@@ -90,86 +90,128 @@ European and North American markets show strong demand for certified organic Eth
     ];
 
     return (
-        <div className='min-h-screen bg-gray-50'>
-            <div className='container mx-auto px-4 py-12'>
+        <main className='pt-14'>
+            <div className='container mx-auto px-4 py-4'>
+                {' '}
+                {/* Reduced from py-8 to py-4 */}
                 {/* Header */}
-                <div className='mb-12 text-center'>
-                    <h1 className='mb-4 text-4xl font-bold text-gray-900 md:text-5xl'>AgriMarket Insights</h1>
-                    <p className='mx-auto max-w-3xl text-xl text-gray-600'>
+                <div className='mb-4 text-center'>
+                    {' '}
+                    {/* Reduced from mb-8 to mb-4 */}
+                    <h1 className='mb-1 text-2xl font-bold text-gray-900 md:text-3xl'>
+                        {' '}
+                        {/* Reduced text size further */}
+                        AgriMarket Insights
+                    </h1>
+                    <p className='mx-auto max-w-3xl text-base text-gray-600'>
+                        {' '}
+                        {/* Reduced to text-base */}
                         Expert analysis, market trends, and insights for agricultural exporters and buyers.
                     </p>
                 </div>
-
                 {/* Category Filter */}
-                <div className='mb-8 flex flex-wrap justify-center gap-3'>
+                <div className='mb-3 flex flex-wrap justify-center gap-1.5'>
+                    {' '}
+                    {/* Reduced gap further */}
                     {categories.map((category) => (
                         <button
                             key={category}
-                            className={`rounded-full px-5 py-2 text-sm font-medium transition-colors ${category === 'All' ? 'bg-green-600 text-white' : 'bg-white text-gray-700 hover:bg-gray-100'}`}>
+                            className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${category === 'All' ? 'bg-green-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                             {category}
                         </button>
                     ))}
                 </div>
-
                 {/* Featured Post */}
-                <div className='mb-12 overflow-hidden rounded-2xl bg-linear-to-r from-green-900 to-green-700'>
-                    <div className='p-8 text-white md:p-12'>
+                <div className='mb-4 overflow-hidden rounded-lg bg-linear-to-r from-green-900 to-green-700'>
+                    {' '}
+                    {/* Changed to rounded-lg */}
+                    <div className='p-4 text-white md:p-6'>
+                        {' '}
+                        {/* Reduced padding further */}
                         <div className='max-w-2xl'>
-                            <span className='mb-4 inline-block rounded-full bg-green-500/20 px-4 py-1 text-sm'>
+                            <span className='mb-2 inline-block rounded-full bg-green-500/20 px-2 py-0.5 text-xs'>
+                                {' '}
+                                {/* Reduced */}
                                 Featured Post
                             </span>
-                            <h2 className='mb-4 text-3xl font-bold md:text-4xl'>
+                            <h2 className='mb-2 text-xl font-bold md:text-2xl'>
+                                {' '}
+                                {/* Reduced text size */}
                                 2025 Agricultural Export Outlook for Ethiopia
                             </h2>
-                            <p className='mb-6 text-lg text-green-100'>
+                            <p className='mb-3 text-sm text-green-100'>
+                                {' '}
+                                {/* Reduced to text-sm */}
                                 Comprehensive analysis of market projections, emerging opportunities, and strategic
                                 recommendations for exporters.
                             </p>
-                            <div className='flex items-center gap-4'>
-                                <span className='text-green-200'>Market Research Team</span>
-                                <span className='text-green-200'>•</span>
-                                <span className='text-green-200'>Jan 2, 2025</span>
-                                <span className='text-green-200'>•</span>
-                                <span className='text-green-200'>10 min read</span>
+                            <div className='flex flex-wrap items-center gap-1.5 text-xs text-green-200'>
+                                {' '}
+                                {/* Reduced to text-xs */}
+                                <span>Market Research Team</span>
+                                <span>•</span>
+                                <span>Jan 2, 2025</span>
+                                <span>•</span>
+                                <span>10 min read</span>
                             </div>
-                            <button className='mt-6 rounded-lg bg-white px-6 py-3 font-semibold text-green-700 hover:bg-gray-100'>
+                            <button className='mt-3 rounded-md bg-white px-4 py-1.5 text-xs font-semibold text-green-700 hover:bg-gray-100'>
+                                {' '}
+                                {/* Reduced padding further */}
                                 Read Full Report →
                             </button>
                         </div>
                     </div>
                 </div>
-
                 {/* Blog Grid */}
-                <div className='mb-12'>
-                    <h2 className='mb-6 text-2xl font-bold text-gray-900'>Latest Insights</h2>
-                    <div className='grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3'>
+                <div className='mb-4'>
+                    {' '}
+                    {/* Reduced from mb-8 to mb-4 */}
+                    <h2 className='mb-2 text-lg font-bold text-gray-900'>
+                        {' '}
+                        {/* Reduced text size */}
+                        Latest Insights
+                    </h2>
+                    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+                        {' '}
+                        {/* Reduced gap to 4 */}
                         {blogPosts.map((post) => (
                             <BlogCard key={post.id} post={post} />
                         ))}
                     </div>
                 </div>
-
                 {/* Newsletter */}
-                <div className='mx-auto max-w-2xl rounded-2xl bg-white p-8 shadow-lg'>
+                <div className='mx-auto max-w-2xl rounded-lg bg-gray-50 p-4 shadow-sm'>
+                    {' '}
+                    {/* Reduced padding and shadow */}
                     <div className='text-center'>
-                        <h3 className='mb-4 text-2xl font-bold text-gray-900'>Stay Updated</h3>
-                        <p className='mb-6 text-gray-600'>
+                        <h3 className='mb-2 text-lg font-bold text-gray-900'>
+                            {' '}
+                            {/* Reduced text size */}
+                            Stay Updated
+                        </h3>
+                        <p className='mb-3 text-sm text-gray-600'>
+                            {' '}
+                            {/* Reduced to text-sm */}
                             Get the latest market insights and agricultural export trends directly in your inbox.
                         </p>
-                        <div className='flex flex-col gap-4 sm:flex-row'>
+                        <div className='flex flex-col gap-2 sm:flex-row'>
+                            {' '}
+                            {/* Reduced gap to 2 */}
                             <input
                                 type='email'
                                 placeholder='Your email address'
-                                className='grow rounded-lg border border-gray-300 px-4 py-3 focus:ring-2 focus:ring-green-500 focus:outline-none'
+                                className='grow rounded-md border border-gray-300 px-3 py-1.5 text-sm focus:ring-1 focus:ring-green-500 focus:outline-none' // Reduced padding
                             />
-                            <button className='rounded-lg bg-green-600 px-6 py-3 font-semibold text-white hover:bg-green-700'>
+                            <button className='rounded-md bg-green-600 px-4 py-1.5 text-sm font-semibold text-white hover:bg-green-700'>
+                                {' '}
+                                {/* Reduced padding */}
                                 Subscribe
                             </button>
                         </div>
-                        <p className='mt-4 text-sm text-gray-500'>No spam. Unsubscribe anytime.</p>
+                        <p className='mt-2 text-xs text-gray-500'>No spam. Unsubscribe anytime.</p>
                     </div>
                 </div>
             </div>
-        </div>
+        </main>
     );
 }

@@ -107,7 +107,7 @@ const Navbar = () => {
 
                     {/* Sign In */}
                     <Button asChild size='sm' className='rounded-full bg-emerald-600 text-white hover:bg-emerald-700'>
-                        <Link href='/login'>Sign In</Link>
+                        <Link href='/login'>Log In</Link>
                     </Button>
                 </div>
             </div>
