@@ -39,7 +39,7 @@ const Navbar = () => {
 
     const menuItems = [
         { title: 'Services', url: '/#services' },
-        { title: 'Market Prices', url: '/prices' },
+        { title: 'Analytics Tools', url: '/AnalyticsTools' },
         { title: 'Blog', url: '/blog' },
         { title: 'About Us', url: '/#about' },
         { title: 'Contact', url: '/#contact' }
