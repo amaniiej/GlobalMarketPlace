@@ -32,8 +32,6 @@ const Navbar = () => {
         };
 
         window.addEventListener('scroll', handleScroll, { passive: true });
-
-        // Initial check
         handleScroll();
 
         return () => window.removeEventListener('scroll', handleScroll);
@@ -55,16 +53,13 @@ const Navbar = () => {
             style={{
                 transitionTimingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
                 backdropFilter: 'blur(10px)',
-                backgroundColor: 'rgba(255, 255, 255, 0.7)' // 70% transparency (35% + 35% = 70%)
+                backgroundColor: 'rgba(255, 255, 255, 0.7)'
             }}>
             <div className='mx-auto flex h-14 max-w-7xl items-center px-4'>
-                {/* LEFT — Brand with Logo - EXTREMELY CLOSE */}
+                {/* LEFT — Brand with Logo */}
                 <div className='flex flex-1 items-center justify-start'>
                     <Link href='/' className='flex items-center transition-transform duration-200 hover:scale-105'>
-                        {/* Logo Image - 15% larger from current 56px */}
                         <div className='relative h-16 w-16'>
-                            {' '}
-                            {/* 15% increase: 56px × 1.15 = 64.4px → h-16 w-16 = 64px */}
                             <Image
                                 src='/images/logo-nav.png'
                                 alt='AGROSPACE Logo'
@@ -74,7 +69,6 @@ const Navbar = () => {
                                 priority
                             />
                         </div>
-                        {/* Brand name with NEGATIVE margin to pull it CLOSER */}
                         <span className='-ml-2 text-lg font-semibold tracking-wider text-gray-900'>AGROSPACE</span>
                     </Link>
                 </div>
@@ -91,14 +85,29 @@ const Navbar = () => {
                     ))}
                 </div>
 
-                {/* RIGHT — CTA */}
-                <div className='flex flex-1 items-center justify-end'>
+                {/* RIGHT — AUTH BUTTONS */}
+                <div className='flex flex-1 items-center justify-end gap-3'>
+                    {/* I am an Importer */}
                     <Button
                         asChild
-                        className='inline-flex items-center rounded-full bg-[#0F3D2E] px-8 py-3 text-sm font-medium text-white transition-transform duration-200 hover:scale-105 hover:bg-[#115140]'>
-                        <a href='https://tally.so/r/Y5Pl2z' target='_blank' rel='noopener noreferrer'>
-                            Order Now
-                        </a>
+                        variant='outline'
+                        size='sm'
+                        className='hidden rounded-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 md:inline-flex'>
+                        <Link href='/signup/importer'>I am an Importer</Link>
+                    </Button>
+
+                    {/* I am an Exporter */}
+                    <Button
+                        asChild
+                        variant='outline'
+                        size='sm'
+                        className='hidden rounded-full border-emerald-600 text-emerald-700 hover:bg-emerald-50 hover:text-emerald-800 md:inline-flex'>
+                        <Link href='/signup/exporter'>I am an Exporter</Link>
+                    </Button>
+
+                    {/* Sign In */}
+                    <Button asChild size='sm' className='rounded-full bg-emerald-600 text-white hover:bg-emerald-700'>
+                        <Link href='/login'>Sign In</Link>
                     </Button>
                 </div>
             </div>
