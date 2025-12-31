@@ -1,187 +1,154 @@
-// /home/amanuel/Documents/AGROSPACE Site/src/app/AnalyticsTools/page.tsx
-import React from 'react';
+'use client';
 
-import { BarChart3, Download, Info, LineChart, TrendingUp } from 'lucide-react';
+import { ArrowDown, ArrowUp, Clock, MapPin, TrendingUp } from 'lucide-react';
 
-const AnalyticsToolsPage = () => {
+const PriceTrends = () => {
     return (
-        <div className='min-h-screen bg-linear-to-b from-gray-50 to-white'>
-            {/* Header Section */}
-            <div className='border-b border-gray-200 bg-white shadow-sm'>
-                <div className='container mx-auto px-4 py-8'>
-                    <div className='flex items-start justify-between'>
-                        <div>
-                            <h1 className='mb-2 text-4xl font-bold text-gray-900'>Analytics & Market Intelligence</h1>
-                            <p className='max-w-3xl text-gray-600'>
-                                Advanced tools for Ethiopian commodity exporters and international buyers. Real-time
-                                price tracking, trend analysis, and market insights to optimize your trading decisions.
-                            </p>
-                        </div>
-                        <div className='flex space-x-3'>
-                            <button className='flex items-center space-x-2 rounded-lg bg-[#09704f] px-4 py-2 text-white transition-colors hover:bg-[#075c43]'>
-                                <Download className='h-4 w-4' />
-                                <span>Export Report</span>
-                            </button>
-                        </div>
+        <div className='rounded-3xl border border-gray-200 bg-white shadow-xl'>
+            {/* Header */}
+            <div className='flex items-center justify-between border-b border-gray-100 bg-linear-to-r from-gray-50 to-white p-6'>
+                <div className='flex items-center gap-3'>
+                    <div className='rounded-xl bg-[#09704f]/10 p-2'>
+                        <TrendingUp className='h-6 w-6 text-[#09704f]' />
                     </div>
-
-                    {/* Stats Overview */}
-                    <div className='mt-8 grid grid-cols-1 gap-4 md:grid-cols-4'>
-                        <div className='rounded-xl bg-linear-to-r from-[#09704f] to-[#0a8560] p-4 text-white shadow'>
-                            <div className='flex items-center justify-between'>
-                                <div>
-                                    <p className='text-sm opacity-90'>Active Markets</p>
-                                    <p className='mt-1 text-2xl font-bold'>8</p>
-                                </div>
-                                <BarChart3 className='h-8 w-8 opacity-80' />
-                            </div>
-                        </div>
-
-                        <div className='rounded-xl bg-linear-to-r from-[#065b7a] to-[#08719a] p-4 text-white shadow'>
-                            <div className='flex items-center justify-between'>
-                                <div>
-                                    <p className='text-sm opacity-90'>Today's Volume</p>
-                                    <p className='mt-1 text-2xl font-bold'>13,407</p>
-                                </div>
-                                <TrendingUp className='h-8 w-8 opacity-80' />
-                            </div>
-                            <p className='mt-2 text-xs opacity-80'>Feresulla traded</p>
-                        </div>
-
-                        <div className='rounded-xl border border-gray-200 bg-white p-4 shadow'>
-                            <div className='flex items-center justify-between'>
-                                <div>
-                                    <p className='text-sm text-gray-600'>Avg Price Change</p>
-                                    <p className='mt-1 text-2xl font-bold text-green-600'>+2.1%</p>
-                                </div>
-                                <LineChart className='h-8 w-8 text-gray-500' />
-                            </div>
-                        </div>
-
-                        <div className='rounded-xl border border-gray-200 bg-white p-4 shadow'>
-                            <div className='flex items-center justify-between'>
-                                <div>
-                                    <p className='text-sm text-gray-600'>Total Stock</p>
-                                    <p className='mt-1 text-2xl font-bold'>349,708</p>
-                                </div>
-                                <div className='text-right'>
-                                    <p className='text-xs text-gray-500'>Feresulla available</p>
-                                </div>
-                            </div>
-                        </div>
+                    <div>
+                        <h3 className='text-xl font-bold text-gray-900'>Current Market Prices</h3>
+                        <p className='text-sm text-gray-500'>Updated every 15 minutes</p>
                     </div>
+                </div>
+                <div className='flex items-center gap-2 text-sm text-gray-500'>
+                    <span>All Markets</span>
+                    <Clock className='h-4 w-4' />
+                    <span>2 min ago</span>
                 </div>
             </div>
 
-            {/* Main Content */}
-            <div className='container mx-auto px-4 py-8'>
-                <div className='mb-6'>
-                    <h2 className='mb-2 text-2xl font-bold text-gray-800'>Price Trends Dashboard</h2>
-                    <p className='text-gray-600'>
-                        Monitor real-time commodity prices with exporter and buyer-specific metrics.
-                    </p>
-                </div>
+            {/* Table */}
+            <div className='overflow-x-auto'>
+                <table className='w-full'>
+                    <thead>
+                        <tr className='border-b border-gray-200 bg-gray-50'>
+                            <th className='px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase'>
+                                Commodity
+                            </th>
+                            <th className='px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase'>
+                                Grade
+                            </th>
+                            <th className='px-6 py-4 text-left text-xs font-semibold tracking-wider text-gray-600 uppercase'>
+                                Market
+                            </th>
+                            <th className='px-6 py-4 text-right text-xs font-semibold tracking-wider text-gray-600 uppercase'>
+                                Price (ETB)
+                            </th>
+                            <th className='px-6 py-4 text-right text-xs font-semibold tracking-wider text-gray-600 uppercase'>
+                                24h Change
+                            </th>
+                            <th className='px-6 py-4 text-right text-xs font-semibold tracking-wider text-gray-600 uppercase'>
+                                Last Updated
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody className='divide-y divide-gray-100'>
+                        {/* Teff */}
+                        <tr className='transition-colors hover:bg-gray-50'>
+                            <td className='px-6 py-4 font-medium text-gray-900'>Teff (Ankober)</td>
+                            <td className='px-6 py-4 text-sm text-gray-700'>Grade 2</td>
+                            <td className='px-6 py-4'>
+                                <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
+                                    ECX
+                                </span>
+                            </td>
+                            <td className='px-6 py-4 text-right text-lg font-bold text-[#09704f]'>45/kg</td>
+                            <td className='flex items-center justify-end px-6 py-4 text-right font-semibold text-green-600'>
+                                <ArrowUp className='mr-1 h-4 w-4' /> +2.4%
+                            </td>
+                            <td className='px-6 py-4 text-right text-sm text-gray-500'>2 hours ago</td>
+                        </tr>
 
-                {/* Price Trends Table */}
-                <div className='rounded-3xl border border-gray-200 bg-white p-8 shadow-xl'>
-                    <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
-                        <div>
-                            <h3 className='mb-4 text-xl font-bold text-gray-900'>Feresulla Price Trend</h3>
-                            <div className='flex h-80 animate-pulse items-center justify-center rounded-2xl bg-linear-to-br from-[#09704f]/10 to-[#0a8560]/10'>
-                                <div className='text-6xl'>📈</div>
-                            </div>
-                        </div>
-                        <div className='space-y-6'>
-                            <div className='space-y-2'>
-                                <div className='flex justify-between'>
-                                    <span className='text-sm font-medium text-gray-600'>Current Price</span>
-                                    <span className='text-2xl font-bold text-[#09704f]'>ETB 45.2/kg</span>
-                                </div>
-                                <div className='h-2 w-full rounded-full bg-gray-200'>
-                                    <div className='h-2 w-4/5 rounded-full bg-[#09704f]'></div>
-                                </div>
-                            </div>
-                            <div className='space-y-2'>
-                                <div className='flex justify-between'>
-                                    <span className='text-sm font-medium text-gray-600'>24h Change</span>
-                                    <span className='text-lg font-bold text-green-600'>+2.1%</span>
-                                </div>
-                                <div className='h-2 w-full rounded-full bg-gray-200'>
-                                    <div className='h-2 w-3/4 rounded-full bg-green-500'></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                        {/* Sesame */}
+                        <tr className='transition-colors hover:bg-gray-50'>
+                            <td className='px-6 py-4 font-medium text-gray-900'>Sesame (Humera)</td>
+                            <td className='px-6 py-4 text-sm text-gray-700'>Grade A</td>
+                            <td className='px-6 py-4'>
+                                <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
+                                    ECX
+                                </span>
+                            </td>
+                            <td className='px-6 py-4 text-right text-lg font-bold text-[#09704f]'>128.5/kg</td>
+                            <td className='flex items-center justify-end px-6 py-4 text-right font-semibold text-green-600'>
+                                <ArrowUp className='mr-1 h-4 w-4' /> +4.8%
+                            </td>
+                            <td className='px-6 py-4 text-right text-sm text-gray-500'>3 hours ago</td>
+                        </tr>
 
-                {/* Additional Information */}
-                <div className='mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3'>
-                    {/* Key Insights */}
-                    <div className='rounded-xl border border-gray-100 bg-white p-6 shadow'>
-                        <h3 className='mb-4 flex items-center text-lg font-semibold text-gray-800'>
-                            <Info className='mr-2 h-5 w-5 text-[#09704f]' />
-                            Key Insights
-                        </h3>
-                        <ul className='space-y-3'>
-                            <li className='flex items-start'>
-                                <div className='mt-2 mr-3 h-2 w-2 rounded-full bg-[#09704f]'></div>
-                                <span className='text-gray-700'>Sesame shows strongest momentum at +4.8%</span>
-                            </li>
-                            <li className='flex items-start'>
-                                <div className='mt-2 mr-3 h-2 w-2 rounded-full bg-[#065b7a]'></div>
-                                <span className='text-gray-700'>High liquidity in Wheat market</span>
-                            </li>
-                            <li className='flex items-start'>
-                                <div className='mt-2 mr-3 h-2 w-2 rounded-full bg-[#09704f]'></div>
-                                <span className='text-gray-700'>Coffee Grade 1 supply tightening</span>
-                            </li>
-                        </ul>
-                    </div>
+                        {/* Chickpeas */}
+                        <tr className='transition-colors hover:bg-gray-50'>
+                            <td className='px-6 py-4 font-medium text-gray-900'>Chickpeas</td>
+                            <td className='px-6 py-4 text-sm text-gray-700'>Grade 1</td>
+                            <td className='px-6 py-4'>
+                                <span className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800'>
+                                    Local
+                                </span>
+                            </td>
+                            <td className='px-6 py-4 text-right text-lg font-bold text-[#065b7a]'>68/kg</td>
+                            <td className='flex items-center justify-end px-6 py-4 text-right font-semibold text-green-600'>
+                                <ArrowUp className='mr-1 h-4 w-4' /> +3.5%
+                            </td>
+                            <td className='px-6 py-4 text-right text-sm text-gray-500'>4 hours ago</td>
+                        </tr>
 
-                    {/* Market Status */}
-                    <div className='rounded-xl border border-gray-100 bg-white p-6 shadow'>
-                        <h3 className='mb-4 text-lg font-semibold text-gray-800'>Market Status</h3>
-                        <div className='space-y-4'>
-                            <div>
-                                <div className='mb-1 flex justify-between'>
-                                    <span className='text-sm text-gray-600'>ECX Markets</span>
-                                    <span className='text-sm font-semibold text-[#09704f]'>Active</span>
-                                </div>
-                                <div className='h-2 w-full rounded-full bg-gray-200'>
-                                    <div className='h-2 w-3/4 rounded-full bg-[#09704f]'></div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className='mb-1 flex justify-between'>
-                                    <span className='text-sm text-gray-600'>Local Markets</span>
-                                    <span className='text-sm font-semibold text-[#065b7a]'>Trading</span>
-                                </div>
-                                <div className='h-2 w-full rounded-full bg-gray-200'>
-                                    <div className='h-2 w-5/6 rounded-full bg-[#065b7a]'></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                        {/* Green Mung Beans */}
+                        <tr className='transition-colors hover:bg-gray-50'>
+                            <td className='px-6 py-4 font-medium text-gray-900'>Green Mung Beans</td>
+                            <td className='px-6 py-4 text-sm text-gray-700'>Export</td>
+                            <td className='px-6 py-4'>
+                                <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
+                                    ECX
+                                </span>
+                            </td>
+                            <td className='px-6 py-4 text-right text-lg font-bold text-[#09704f]'>78/kg</td>
+                            <td className='flex items-center justify-end px-6 py-4 text-right font-semibold text-red-600'>
+                                <ArrowDown className='mr-1 h-4 w-4' /> -2.4%
+                            </td>
+                            <td className='px-6 py-4 text-right text-sm text-gray-500'>2 hours ago</td>
+                        </tr>
 
-                    {/* Quick Actions */}
-                    <div className='rounded-xl border border-gray-100 bg-white p-6 shadow'>
-                        <h3 className='mb-4 text-lg font-semibold text-gray-800'>Quick Actions</h3>
-                        <div className='space-y-3'>
-                            <button className='w-full rounded-lg border border-[#09704f] px-4 py-3 text-left text-[#09704f] transition-colors hover:bg-[#09704f] hover:text-white'>
-                                Set Price Alert
-                            </button>
-                            <button className='w-full rounded-lg border border-[#065b7a] px-4 py-3 text-left text-[#065b7a] transition-colors hover:bg-[#065b7a] hover:text-white'>
-                                Calculate Freight Cost
-                            </button>
-                            <button className='w-full rounded-lg bg-gray-100 px-4 py-3 text-left text-gray-700 transition-colors hover:bg-gray-200'>
-                                View Historical Data
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                        {/* White Haricot */}
+                        <tr className='transition-colors hover:bg-gray-50'>
+                            <td className='px-6 py-4 font-medium text-gray-900'>White Haricot Beans</td>
+                            <td className='px-6 py-4 text-sm text-gray-700'>Grade 2</td>
+                            <td className='px-6 py-4'>
+                                <span className='inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800'>
+                                    ECX
+                                </span>
+                            </td>
+                            <td className='px-6 py-4 text-right text-lg font-bold text-[#09704f]'>74/kg</td>
+                            <td className='flex items-center justify-end px-6 py-4 text-right font-semibold text-green-600'>
+                                <ArrowUp className='mr-1 h-4 w-4' /> +1.5%
+                            </td>
+                            <td className='px-6 py-4 text-right text-sm text-gray-500'>1 hour ago</td>
+                        </tr>
+
+                        {/* Cardamom */}
+                        <tr className='transition-colors hover:bg-gray-50'>
+                            <td className='px-6 py-4 font-medium text-gray-900'>Cardamom</td>
+                            <td className='px-6 py-4 text-sm text-gray-700'>Green</td>
+                            <td className='px-6 py-4'>
+                                <span className='inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800'>
+                                    Local
+                                </span>
+                            </td>
+                            <td className='px-6 py-4 text-right text-lg font-bold text-[#065b7a]'>320/kg</td>
+                            <td className='flex items-center justify-end px-6 py-4 text-right font-semibold text-red-600'>
+                                <ArrowDown className='mr-1 h-4 w-4' /> -2.7%
+                            </td>
+                            <td className='px-6 py-4 text-right text-sm text-gray-500'>6 hours ago</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     );
 };
 
-export default AnalyticsToolsPage;
+export default PriceTrends;
