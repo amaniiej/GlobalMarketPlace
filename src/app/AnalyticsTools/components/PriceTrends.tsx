@@ -1,7 +1,6 @@
 // /home/amanuel/Documents/AGROSPACE Site/src/app/AnalyticsTools/page.tsx
 import React from 'react';
 
-import PriceTrends from './components/PriceTrends';
 import { BarChart3, Download, Info, LineChart, TrendingUp } from 'lucide-react';
 
 const AnalyticsToolsPage = () => {
@@ -84,7 +83,36 @@ const AnalyticsToolsPage = () => {
                 </div>
 
                 {/* Price Trends Table */}
-                <PriceTrends />
+                <div className='rounded-3xl border border-gray-200 bg-white p-8 shadow-xl'>
+                    <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
+                        <div>
+                            <h3 className='mb-4 text-xl font-bold text-gray-900'>Feresulla Price Trend</h3>
+                            <div className='flex h-80 animate-pulse items-center justify-center rounded-2xl bg-linear-to-br from-[#09704f]/10 to-[#0a8560]/10'>
+                                <div className='text-6xl'>📈</div>
+                            </div>
+                        </div>
+                        <div className='space-y-6'>
+                            <div className='space-y-2'>
+                                <div className='flex justify-between'>
+                                    <span className='text-sm font-medium text-gray-600'>Current Price</span>
+                                    <span className='text-2xl font-bold text-[#09704f]'>ETB 45.2/kg</span>
+                                </div>
+                                <div className='h-2 w-full rounded-full bg-gray-200'>
+                                    <div className='h-2 w-4/5 rounded-full bg-[#09704f]'></div>
+                                </div>
+                            </div>
+                            <div className='space-y-2'>
+                                <div className='flex justify-between'>
+                                    <span className='text-sm font-medium text-gray-600'>24h Change</span>
+                                    <span className='text-lg font-bold text-green-600'>+2.1%</span>
+                                </div>
+                                <div className='h-2 w-full rounded-full bg-gray-200'>
+                                    <div className='h-2 w-3/4 rounded-full bg-green-500'></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
                 {/* Additional Information */}
                 <div className='mt-8 grid grid-cols-1 gap-6 lg:grid-cols-3'>
