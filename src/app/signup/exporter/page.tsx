@@ -1,44 +1,38 @@
-// app/signup/exporter/page.tsx
 'use client';
 
 import { useState } from 'react';
 
-import { Building, CheckCircle, FileText, Globe, Upload, User } from 'lucide-react';
-
-// app/signup/exporter/page.tsx
-
-// app/signup/exporter/page.tsx
+import { Building, CheckCircle, FileText, Globe, Mail, Phone, User } from 'lucide-react';
 
 export default function ExporterSignupPage() {
     const [formData, setFormData] = useState({
         // Company Information
         companyName: '',
-        exportLicenseNumber: '',
-        registrationDocument: null as File | null,
+        companyEmail: '',
 
         // Contact Information
         contactPerson: '',
+        primaryPhone: '',
+        secondaryPhone: '',
+        additionalEmail: '',
         languages: [] as string[],
 
         // Export Information
         certifications: [] as string[],
+        otherCertifications: [{ name: '', description: '' }] as { name: string; description: string }[],
         exportHistory: '',
         exportCapacity: ''
     });
 
     const certificationOptions = [
-        'GlobalGAP',
         'EU Organic',
+        'GlobalGAP',
         'Fair Trade',
         'ISO 22000',
         'HACCP',
-        'Kosher',
         'Halal',
-        'Rainforest Alliance',
-        'UTZ Certified',
-        'Organic',
-        'Non-GMO',
-        'BRCGS'
+        'Organic Ethiopia',
+        'Rainforest Alliance'
     ];
 
     const languageOptions = [
@@ -53,17 +47,12 @@ export default function ExporterSignupPage() {
         'Portuguese'
     ];
 
-    const handleInputChange = (field: string, value: string | string[]) => {
+    const handleInputChange = (field: string, value: string | string[] | { name: string; description: string }[]) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0] || null;
-        setFormData((prev) => ({ ...prev, registrationDocument: file }));
-    };
-
     const toggleSelection = (field: 'certifications' | 'languages', value: string) => {
-        const current = [...formData[field]];
+        const current = [...(formData[field] as string[])];
         if (current.includes(value)) {
             handleInputChange(
                 field,
@@ -74,10 +63,25 @@ export default function ExporterSignupPage() {
         }
     };
 
+    const handleOtherCertChange = (index: number, field: 'name' | 'description', value: string) => {
+        const updated = [...formData.otherCertifications];
+        updated[index] = { ...updated[index], [field]: value };
+        handleInputChange('otherCertifications', updated);
+    };
+
+    const addOtherCert = () => {
+        const newCert = { name: '', description: '' };
+        handleInputChange('otherCertifications', [...formData.otherCertifications, newCert]);
+    };
+
+    const removeOtherCert = (index: number) => {
+        const updated = formData.otherCertifications.filter((_, i) => i !== index);
+        handleInputChange('otherCertifications', updated.length ? updated : [{ name: '', description: '' }]);
+    };
+
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
-        // Add your form submission logic here
     };
 
     return (
@@ -89,9 +93,11 @@ export default function ExporterSignupPage() {
                         <Building className='h-5 w-5 text-emerald-600' />
                         <span className='text-sm font-medium text-emerald-700'>Exporter Registration</span>
                     </div>
-                    <h1 className='mb-3 text-3xl font-bold text-gray-900 md:text-4xl'>Create Your Exporter Profile</h1>
+                    <h1 className='mb-3 text-3xl font-bold text-gray-900 md:text-4xl'>
+                        Create Your Exporter Account Profile
+                    </h1>
                     <p className='mx-auto max-w-2xl text-lg text-gray-600'>
-                        Complete your Trust ID Card to connect with verified importers worldwide
+                        Complete your Trust ID Card and connect with verified importers worldwide
                     </p>
                 </div>
 
@@ -106,7 +112,7 @@ export default function ExporterSignupPage() {
                                     </div>
                                     <div>
                                         <h2 className='text-xl font-bold text-gray-900'>Company Information</h2>
-                                        <p className='text-sm text-gray-600'>Legal verification details</p>
+                                        <p className='text-sm text-gray-600'>Login credentials and basic details</p>
                                     </div>
                                 </div>
                             </div>
@@ -126,54 +132,24 @@ export default function ExporterSignupPage() {
                                             placeholder='Enter legal company name'
                                             required
                                         />
-                                        <p className='text-xs text-gray-500'>Must match your registration documents</p>
+                                        <p className='text-xs text-gray-500'>Must match your official registration</p>
                                     </div>
 
-                                    {/* Export License */}
+                                    {/* Company Email (Login Email) */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <FileText className='h-4 w-4' />
-                                            Export License Number *
+                                            <Mail className='h-4 w-4' />
+                                            Company Email *
                                         </label>
                                         <input
-                                            type='text'
-                                            value={formData.exportLicenseNumber}
-                                            onChange={(e) => handleInputChange('exportLicenseNumber', e.target.value)}
+                                            type='email'
+                                            value={formData.companyEmail}
+                                            onChange={(e) => handleInputChange('companyEmail', e.target.value)}
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
-                                            placeholder='ET-EXPORT-XXXXX'
+                                            placeholder='export@company.com'
                                             required
                                         />
-                                        <p className='text-xs text-gray-500'>Issued by Ethiopian authorities</p>
-                                    </div>
-
-                                    {/* Registration Document */}
-                                    <div className='space-y-3 md:col-span-2'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Upload className='h-4 w-4' />
-                                            Company Registration Document *
-                                        </label>
-                                        <div className='relative'>
-                                            <input
-                                                type='file'
-                                                onChange={handleFileChange}
-                                                accept='.pdf,.jpg,.png'
-                                                className='absolute inset-0 h-full w-full cursor-pointer opacity-0'
-                                                required
-                                            />
-                                            <div className='flex cursor-pointer items-center justify-between rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 px-4 py-8 hover:border-emerald-400 hover:bg-emerald-50'>
-                                                <div className='text-center'>
-                                                    <Upload className='mx-auto mb-2 h-8 w-8 text-gray-400' />
-                                                    <p className='text-sm font-medium text-gray-700'>
-                                                        {formData.registrationDocument
-                                                            ? formData.registrationDocument.name
-                                                            : 'Upload registration certificate'}
-                                                    </p>
-                                                    <p className='mt-1 text-xs text-gray-500'>
-                                                        PDF, JPG or PNG up to 5MB
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <p className='text-xs text-gray-500'>Primary company email</p>
                                     </div>
                                 </div>
                             </div>
@@ -210,8 +186,54 @@ export default function ExporterSignupPage() {
                                         />
                                     </div>
 
-                                    {/* Languages */}
+                                    {/* Primary Phone */}
                                     <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Phone className='h-4 w-4' />
+                                            Primary Phone *
+                                        </label>
+                                        <input
+                                            type='tel'
+                                            value={formData.primaryPhone}
+                                            onChange={(e) => handleInputChange('primaryPhone', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            placeholder='+251 9XX XXX XXX'
+                                            required
+                                        />
+                                    </div>
+
+                                    {/* Secondary Phone */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Phone className='h-4 w-4' />
+                                            Secondary Phone
+                                        </label>
+                                        <input
+                                            type='tel'
+                                            value={formData.secondaryPhone}
+                                            onChange={(e) => handleInputChange('secondaryPhone', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            placeholder='+251 9XX XXX XXX'
+                                        />
+                                    </div>
+
+                                    {/* Additional Email */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Mail className='h-4 w-4' />
+                                            Additional Email
+                                        </label>
+                                        <input
+                                            type='email'
+                                            value={formData.additionalEmail}
+                                            onChange={(e) => handleInputChange('additionalEmail', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            placeholder='sales@company.com'
+                                        />
+                                    </div>
+
+                                    {/* Languages */}
+                                    <div className='space-y-3 md:col-span-2'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
                                             <Globe className='h-4 w-4' />
                                             Languages Spoken *
@@ -282,23 +304,80 @@ export default function ExporterSignupPage() {
                                                 </button>
                                             ))}
                                         </div>
+
+                                        {/* Other Certifications - Unlimited */}
+                                        <div className='space-y-3 pt-4'>
+                                            <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                                Other Certifications
+                                            </label>
+                                            <p className='text-xs text-gray-500'>
+                                                Add any additional certifications not listed above
+                                            </p>
+                                            <div className='space-y-3'>
+                                                {formData.otherCertifications.map((cert, index) => (
+                                                    <div
+                                                        key={index}
+                                                        className='flex items-end gap-3 rounded-lg border border-gray-200 bg-gray-50 p-4'>
+                                                        <div className='flex-1 space-y-2'>
+                                                            <input
+                                                                type='text'
+                                                                value={cert.name}
+                                                                onChange={(e) =>
+                                                                    handleOtherCertChange(index, 'name', e.target.value)
+                                                                }
+                                                                className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200'
+                                                                placeholder='Certification name (e.g., Ethiopia Quality Mark)'
+                                                            />
+                                                        </div>
+                                                        <div className='flex-1 space-y-2'>
+                                                            <input
+                                                                type='text'
+                                                                value={cert.description}
+                                                                onChange={(e) =>
+                                                                    handleOtherCertChange(
+                                                                        index,
+                                                                        'description',
+                                                                        e.target.value
+                                                                    )
+                                                                }
+                                                                className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200'
+                                                                placeholder='Brief description (50 chars)'
+                                                                maxLength={50}
+                                                            />
+                                                        </div>
+                                                        <button
+                                                            type='button'
+                                                            onClick={() => removeOtherCert(index)}
+                                                            className='flex h-10 items-center justify-center rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200'>
+                                                            ×
+                                                        </button>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <button
+                                                type='button'
+                                                onClick={addOtherCert}
+                                                className='flex items-center gap-2 rounded-lg border-2 border-dashed border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 transition-all hover:border-emerald-400 hover:bg-emerald-50'>
+                                                ➕ Add Another Certification
+                                            </button>
+                                        </div>
                                     </div>
 
-                                    {/* Export History */}
+                                    {/* Export History - Optional */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
                                             <Globe className='h-4 w-4' />
-                                            Export History
+                                            Export History (Optional)
                                         </label>
                                         <textarea
                                             value={formData.exportHistory}
                                             onChange={(e) => handleInputChange('exportHistory', e.target.value)}
                                             className='min-h-25 w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
-                                            placeholder='Example: Exported to USA, Germany, UAE. Annual volume: 500 tons. Previously worked with major buyers...'
+                                            placeholder='Countries exported to, key buyers, annual volumes, years of experience...'
                                             rows={3}
                                         />
                                         <p className='text-xs text-gray-500'>
-                                            Mention countries exported to, annual volumes, and notable buyers
+                                            Helps buyers understand your experience (optional)
                                         </p>
                                     </div>
 
@@ -313,11 +392,11 @@ export default function ExporterSignupPage() {
                                             value={formData.exportCapacity}
                                             onChange={(e) => handleInputChange('exportCapacity', e.target.value)}
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
-                                            placeholder='Example: 100 tons, 5000 cartons, etc.'
+                                            placeholder='Example: 100 tons, 5000 cartons, 2x40ft containers'
                                             required
                                         />
                                         <p className='text-xs text-gray-500'>
-                                            Specify unit (tons, kg, containers, etc.)
+                                            Specify unit (tons, kg, containers, cartons, etc.)
                                         </p>
                                     </div>
                                 </div>
@@ -343,7 +422,7 @@ export default function ExporterSignupPage() {
                                 </button>
                                 <button
                                     type='submit'
-                                    className='rounded-lg bg-linear-to-r from-emerald-600 to-green-600 px-8 py-3 font-bold text-white shadow-lg hover:from-emerald-700 hover:to-green-700'>
+                                    className='rounded-lg bg-[#09704f] px-8 py-3 font-bold text-white shadow-lg hover:bg-[#115140]'>
                                     Submit for Verification
                                 </button>
                             </div>

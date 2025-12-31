@@ -1,39 +1,40 @@
-// app/signup/importer/page.tsx
 'use client';
 
 import { useState } from 'react';
 
-import { Briefcase, Building, CheckCircle, Globe, Package, ShoppingCart, Target, User } from 'lucide-react';
-
-// app/signup/importer/page.tsx
-
-// app/signup/importer/page.tsx
-
-// app/signup/importer/page.tsx
-
-// app/signup/importer/page.tsx
+import {
+    Briefcase,
+    Building,
+    CheckCircle,
+    Globe,
+    Mail,
+    Package,
+    Phone,
+    ShoppingCart,
+    Target,
+    User
+} from 'lucide-react';
 
 export default function ImporterSignupPage() {
     const [formData, setFormData] = useState({
         // Company Information
         companyName: '',
+        companyEmail: '',
         country: '',
-        businessRegistration: '',
         companyWebsite: '',
 
         // Contact Information
         contactPerson: '',
-        email: '',
-        phone: '',
+        primaryPhone: '',
+        secondaryPhone: '',
+        additionalEmail: '',
+        languages: [] as string[],
 
         // Import Requirements
         productCategories: [] as string[],
         annualVolume: '',
-        preferredRegions: [] as string[],
 
         // Business Details
-        businessType: '',
-        yearsInBusiness: '',
         certificationRequirements: [] as string[]
     });
 
@@ -52,17 +53,16 @@ export default function ImporterSignupPage() {
         'Specialty Items'
     ];
 
-    const regionOptions = [
-        'Ethiopia',
-        'East Africa',
-        'North Africa',
-        'West Africa',
-        'Southern Africa',
-        'Middle East',
-        'Europe',
-        'North America',
-        'Asia',
-        'Global'
+    const languageOptions = [
+        'English',
+        'Amharic',
+        'Arabic',
+        'French',
+        'Spanish',
+        'Chinese',
+        'German',
+        'Italian',
+        'Portuguese'
     ];
 
     const certificationOptions = [
@@ -78,26 +78,12 @@ export default function ImporterSignupPage() {
         'No Certification Required'
     ];
 
-    const businessTypes = [
-        'Wholesaler',
-        'Retail Chain',
-        'Food Manufacturer',
-        'Restaurant/Hotel Chain',
-        'Trading Company',
-        'Distributor',
-        'Online Retailer',
-        'Other'
-    ];
-
     const handleInputChange = (field: string, value: string | string[]) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
     };
 
-    const toggleSelection = (
-        field: 'productCategories' | 'preferredRegions' | 'certificationRequirements',
-        value: string
-    ) => {
-        const current = [...formData[field]];
+    const toggleSelection = (field: 'productCategories' | 'languages' | 'certificationRequirements', value: string) => {
+        const current = [...(formData[field] as string[])];
         if (current.includes(value)) {
             handleInputChange(
                 field,
@@ -111,7 +97,6 @@ export default function ImporterSignupPage() {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         console.log('Form submitted:', formData);
-        // Add your form submission logic here
     };
 
     return (
@@ -123,11 +108,9 @@ export default function ImporterSignupPage() {
                         <ShoppingCart className='h-5 w-5 text-blue-600' />
                         <span className='text-sm font-medium text-blue-700'>Importer Registration</span>
                     </div>
-                    <h1 className='mb-3 text-3xl font-bold text-gray-900 md:text-4xl'>
-                        Connect with Quality Exporters
-                    </h1>
+                    <h1 className='mb-3 text-3xl font-bold text-gray-900 md:text-4xl'>Create Your Account</h1>
                     <p className='mx-auto max-w-2xl text-lg text-gray-600'>
-                        Join our network of verified importers and source premium agricultural products from Ethiopia
+                        Join our network of verified exporters and source premium agricultural products from Ethiopia
                     </p>
                 </div>
 
@@ -152,7 +135,7 @@ export default function ImporterSignupPage() {
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
                                             <Building className='h-4 w-4' />
-                                            Company Name *
+                                            Official Company Name *
                                         </label>
                                         <input
                                             type='text'
@@ -164,7 +147,23 @@ export default function ImporterSignupPage() {
                                         />
                                     </div>
 
-                                    {/* Country */}
+                                    {/* Company Email */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Mail className='h-4 w-4' />
+                                            Primary Company Email *
+                                        </label>
+                                        <input
+                                            type='email'
+                                            value={formData.companyEmail}
+                                            onChange={(e) => handleInputChange('companyEmail', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
+                                            placeholder='import@company.com'
+                                            required
+                                        />
+                                    </div>
+
+                                    {/* Country of Operation */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
                                             <Globe className='h-4 w-4' />
@@ -180,26 +179,11 @@ export default function ImporterSignupPage() {
                                         />
                                     </div>
 
-                                    {/* Business Registration */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Briefcase className='h-4 w-4' />
-                                            Business Registration Number
-                                        </label>
-                                        <input
-                                            type='text'
-                                            value={formData.businessRegistration}
-                                            onChange={(e) => handleInputChange('businessRegistration', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
-                                            placeholder='Registration number (optional)'
-                                        />
-                                    </div>
-
                                     {/* Website */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
                                             <Globe className='h-4 w-4' />
-                                            Company Website
+                                            Company Website (Optional)
                                         </label>
                                         <input
                                             type='url'
@@ -213,7 +197,7 @@ export default function ImporterSignupPage() {
                             </div>
                         </div>
 
-                        {/* Contact Information Card */}
+                        {/* Contact Information Card - Adapted from Exporter */}
                         <div className='overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm'>
                             <div className='border-b border-gray-100 bg-linear-to-r from-indigo-50 to-purple-50 p-6'>
                                 <div className='flex items-center gap-3'>
@@ -222,7 +206,7 @@ export default function ImporterSignupPage() {
                                     </div>
                                     <div>
                                         <h2 className='text-xl font-bold text-gray-900'>Contact Information</h2>
-                                        <p className='text-sm text-gray-600'>Primary contact details</p>
+                                        <p className='text-sm text-gray-600'>Primary import contact details</p>
                                     </div>
                                 </div>
                             </div>
@@ -239,41 +223,81 @@ export default function ImporterSignupPage() {
                                             value={formData.contactPerson}
                                             onChange={(e) => handleInputChange('contactPerson', e.target.value)}
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
-                                            placeholder='Your full name'
+                                            placeholder='Manager name'
                                             required
                                         />
                                     </div>
 
-                                    {/* Email */}
+                                    {/* Primary Phone */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Briefcase className='h-4 w-4' />
-                                            Email Address *
-                                        </label>
-                                        <input
-                                            type='email'
-                                            value={formData.email}
-                                            onChange={(e) => handleInputChange('email', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
-                                            placeholder='contact@company.com'
-                                            required
-                                        />
-                                    </div>
-
-                                    {/* Phone */}
-                                    <div className='space-y-3 md:col-span-2'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Briefcase className='h-4 w-4' />
-                                            Phone Number *
+                                            <Phone className='h-4 w-4' />
+                                            Primary Phone *
                                         </label>
                                         <input
                                             type='tel'
-                                            value={formData.phone}
-                                            onChange={(e) => handleInputChange('phone', e.target.value)}
+                                            value={formData.primaryPhone}
+                                            onChange={(e) => handleInputChange('primaryPhone', e.target.value)}
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
                                             placeholder='+1 (555) 123-4567'
                                             required
                                         />
+                                    </div>
+
+                                    {/* Secondary Phone */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Phone className='h-4 w-4' />
+                                            Secondary Phone
+                                        </label>
+                                        <input
+                                            type='tel'
+                                            value={formData.secondaryPhone}
+                                            onChange={(e) => handleInputChange('secondaryPhone', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
+                                            placeholder='+1 (555) 123-4567'
+                                        />
+                                    </div>
+
+                                    {/* Additional Email */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Mail className='h-4 w-4' />
+                                            Additional Email
+                                        </label>
+                                        <input
+                                            type='email'
+                                            value={formData.additionalEmail}
+                                            onChange={(e) => handleInputChange('additionalEmail', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
+                                            placeholder='sales@company.com'
+                                        />
+                                    </div>
+
+                                    {/* Languages */}
+                                    <div className='space-y-3 md:col-span-2'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Globe className='h-4 w-4' />
+                                            Languages Spoken *
+                                        </label>
+                                        <div className='flex flex-wrap gap-2'>
+                                            {languageOptions.map((language) => (
+                                                <button
+                                                    key={language}
+                                                    type='button'
+                                                    onClick={() => toggleSelection('languages', language)}
+                                                    className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
+                                                        formData.languages.includes(language)
+                                                            ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-500 ring-offset-2'
+                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                                    }`}>
+                                                    {formData.languages.includes(language) && (
+                                                        <CheckCircle className='h-4 w-4' />
+                                                    )}
+                                                    {language}
+                                                </button>
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -339,114 +363,42 @@ export default function ImporterSignupPage() {
                                             <option value='negotiable'>To be negotiated</option>
                                         </select>
                                     </div>
-
-                                    {/* Preferred Regions */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Globe className='h-4 w-4' />
-                                            Preferred Sourcing Regions
-                                        </label>
-                                        <div className='flex flex-wrap gap-2'>
-                                            {regionOptions.map((region) => (
-                                                <button
-                                                    key={region}
-                                                    type='button'
-                                                    onClick={() => toggleSelection('preferredRegions', region)}
-                                                    className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
-                                                        formData.preferredRegions.includes(region)
-                                                            ? 'bg-blue-100 text-blue-700 ring-2 ring-blue-500 ring-offset-2'
-                                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                    }`}>
-                                                    {formData.preferredRegions.includes(region) && (
-                                                        <CheckCircle className='h-4 w-4' />
-                                                    )}
-                                                    {region}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* Business Details Card */}
+                        {/* Certification Requirements Card */}
                         <div className='overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm'>
                             <div className='border-b border-gray-100 bg-linear-to-r from-amber-50 to-orange-50 p-6'>
                                 <div className='flex items-center gap-3'>
                                     <div className='rounded-lg bg-amber-100 p-2'>
-                                        <Briefcase className='h-6 w-6 text-amber-600' />
+                                        <CheckCircle className='h-6 w-6 text-amber-600' />
                                     </div>
                                     <div>
-                                        <h2 className='text-xl font-bold text-gray-900'>Business Details</h2>
-                                        <p className='text-sm text-gray-600'>Additional business information</p>
+                                        <h2 className='text-xl font-bold text-gray-900'>Certification Requirements</h2>
+                                        <p className='text-sm text-gray-600'>What certifications do you require?</p>
                                     </div>
                                 </div>
                             </div>
                             <div className='p-6'>
-                                <div className='grid gap-6 md:grid-cols-2'>
-                                    {/* Business Type */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Briefcase className='h-4 w-4' />
-                                            Business Type *
-                                        </label>
-                                        <select
-                                            value={formData.businessType}
-                                            onChange={(e) => handleInputChange('businessType', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'
-                                            required>
-                                            <option value=''>Select business type</option>
-                                            {businessTypes.map((type) => (
-                                                <option key={type} value={type}>
-                                                    {type}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
-
-                                    {/* Years in Business */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Target className='h-4 w-4' />
-                                            Years in Business
-                                        </label>
-                                        <select
-                                            value={formData.yearsInBusiness}
-                                            onChange={(e) => handleInputChange('yearsInBusiness', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none'>
-                                            <option value=''>Select experience</option>
-                                            <option value='0-1'>0-1 years</option>
-                                            <option value='1-3'>1-3 years</option>
-                                            <option value='3-5'>3-5 years</option>
-                                            <option value='5-10'>5-10 years</option>
-                                            <option value='10+'>10+ years</option>
-                                        </select>
-                                    </div>
-
-                                    {/* Certification Requirements */}
-                                    <div className='space-y-3 md:col-span-2'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <CheckCircle className='h-4 w-4' />
-                                            Certification Requirements
-                                        </label>
-                                        <div className='grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4'>
-                                            {certificationOptions.map((cert) => (
-                                                <button
-                                                    key={cert}
-                                                    type='button'
-                                                    onClick={() => toggleSelection('certificationRequirements', cert)}
-                                                    className={`flex items-center justify-between rounded-lg border p-3 text-left text-sm transition-all ${
-                                                        formData.certificationRequirements.includes(cert)
-                                                            ? 'border-amber-500 bg-amber-50 text-amber-700'
-                                                            : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                                                    }`}>
-                                                    <span>{cert}</span>
-                                                    {formData.certificationRequirements.includes(cert) && (
-                                                        <CheckCircle className='h-4 w-4' />
-                                                    )}
-                                                </button>
-                                            ))}
-                                        </div>
+                                <div className='space-y-3 md:col-span-2'>
+                                    <div className='grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4'>
+                                        {certificationOptions.map((cert) => (
+                                            <button
+                                                key={cert}
+                                                type='button'
+                                                onClick={() => toggleSelection('certificationRequirements', cert)}
+                                                className={`flex items-center justify-between rounded-lg border p-3 text-left text-sm transition-all ${
+                                                    formData.certificationRequirements.includes(cert)
+                                                        ? 'border-amber-500 bg-amber-50 text-amber-700'
+                                                        : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                                                }`}>
+                                                <span>{cert}</span>
+                                                {formData.certificationRequirements.includes(cert) && (
+                                                    <CheckCircle className='h-4 w-4' />
+                                                )}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             </div>
@@ -455,7 +407,7 @@ export default function ImporterSignupPage() {
                         {/* Submission */}
                         <div className='rounded-xl border border-gray-200 bg-white p-6 text-center shadow-sm'>
                             <div className='mb-6'>
-                                <h3 className='mb-2 text-lg font-bold text-gray-900'>Join Our Network of Importers</h3>
+                                <h3 className='mb-2 text-lg font-bold text-gray-900'>Join Our Network</h3>
                                 <p className='text-sm text-gray-600'>
                                     Get matched with pre-verified exporters that meet your specific requirements
                                 </p>
@@ -470,7 +422,7 @@ export default function ImporterSignupPage() {
                                 </button>
                                 <button
                                     type='submit'
-                                    className='rounded-lg bg-linear-to-r from-blue-600 to-cyan-600 px-8 py-3 font-bold text-white shadow-lg hover:from-blue-700 hover:to-cyan-700'>
+                                    className='rounded-lg bg-[#065b7a] px-8 py-3 font-bold text-white shadow-lg hover:from-blue-700 hover:to-cyan-700'>
                                     Complete Registration
                                 </button>
                             </div>

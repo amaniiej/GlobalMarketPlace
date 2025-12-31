@@ -11,6 +11,18 @@ import { ArrowRight, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 
 // app/login/page.tsx
 
+// app/login/page.tsx
+
+// app/login/page.tsx
+
+// app/login/page.tsx
+
+// app/login/page.tsx
+
+// app/login/page.tsx
+
+// app/login/page.tsx
+
 export default function LoginPage() {
     const [formData, setFormData] = useState({
         email: '',
@@ -74,7 +86,7 @@ export default function LoginPage() {
                                 <div className='space-y-3'>
                                     <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
                                         <Mail className='h-4 w-4' />
-                                        Email Address *
+                                        Company Email Address *
                                     </label>
                                     <div className='relative'>
                                         <Mail className='absolute top-3.5 left-4 h-5 w-5 text-gray-400' />
@@ -83,7 +95,7 @@ export default function LoginPage() {
                                             value={formData.email}
                                             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                             className='w-full rounded-lg border border-gray-300 py-3 pr-4 pl-12 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
-                                            placeholder='your@email.com'
+                                            placeholder='your@companyemail.com'
                                             required
                                             disabled={loading}
                                         />
@@ -143,7 +155,7 @@ export default function LoginPage() {
                                 <button
                                     type='submit'
                                     disabled={loading}
-                                    className='w-full rounded-lg bg-linear-to-r from-emerald-600 to-green-600 px-6 py-3 font-bold text-white shadow-lg hover:from-emerald-700 hover:to-green-700 disabled:opacity-50'>
+                                    className='w-full rounded-lg bg-[#09704f] bg-linear-to-r px-6 py-3 font-bold text-white shadow-lg hover:from-emerald-700 hover:to-green-700 disabled:opacity-50'>
                                     {loading ? (
                                         <span className='flex items-center justify-center gap-2'>
                                             <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
@@ -190,7 +202,7 @@ export default function LoginPage() {
                                 </div>
                                 <a
                                     href='/signup/exporter'
-                                    className='rounded-full bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700'>
+                                    className='rounded-full bg-[#09704f] px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700'>
                                     Sign Up
                                 </a>
                             </div>
@@ -207,7 +219,7 @@ export default function LoginPage() {
                                 </div>
                                 <a
                                     href='/signup/importer'
-                                    className='rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'>
+                                    className='rounded-full bg-[#065b7a] px-4 py-2 text-sm font-medium text-white hover:bg-blue-700'>
                                     Sign Up
                                 </a>
                             </div>
