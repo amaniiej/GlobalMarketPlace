@@ -2,7 +2,7 @@
 import React from 'react';
 
 import PriceTrends from './components/PriceTrends';
-import { BarChart3, Download, LineChart, TrendingUp } from 'lucide-react';
+import { BarChart3, Download, Info, LineChart, TrendingUp } from 'lucide-react';
 
 const AnalyticsToolsPage = () => {
     return (
