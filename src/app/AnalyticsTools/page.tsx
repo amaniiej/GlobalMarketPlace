@@ -1,6 +1,7 @@
 // In your AnalyticsTools/page.tsx
 import React from 'react';
 
+import HScode from './components/HScode';
 import Incoterms from './components/Incoterms';
 import PriceTrends from './components/PriceTrends';
 
@@ -25,6 +26,7 @@ const AnalyticsToolsPage = () => {
             <div className='container mx-auto space-y-8 px-4 py-6'>
                 <PriceTrends />
                 <Incoterms />
+                <HScode />
                 {/* Add more components here */}
             </div>
         </div>
