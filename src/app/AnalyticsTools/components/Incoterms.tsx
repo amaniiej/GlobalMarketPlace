@@ -100,7 +100,7 @@ const IncotermExplainer = () => {
 
     return (
         <section className='rounded-xl border border-gray-200 bg-white shadow-lg'>
-            <div className='border-b border-gray-100 px-5 py-4'>
+            <div id='incoterms' className='border-b border-gray-100 px-5 py-4'>
                 <div className='flex items-center justify-between'>
                     <div>
                         <h2 className='text-lg font-semibold text-gray-900'>Incoterm Responsibility Map</h2>

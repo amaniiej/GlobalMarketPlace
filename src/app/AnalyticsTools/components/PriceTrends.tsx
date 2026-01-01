@@ -4,7 +4,7 @@ import { ArrowDown, ArrowUp, Clock, RefreshCw, TrendingUp } from 'lucide-react';
 
 const PriceTrends = () => {
     return (
-        <div className='rounded-2xl border border-gray-200 bg-white shadow-lg'>
+        <div id='price-trends' className='rounded-2xl border border-gray-200 bg-white shadow-lg'>
             {/* Enhanced Header */}
             <div className='rounded-t-2xl border-b border-gray-100 bg-linear-to-r from-gray-50 via-white to-gray-50 px-6 py-6'>
                 <div className='flex flex-col justify-between gap-4 md:flex-row md:items-center'>

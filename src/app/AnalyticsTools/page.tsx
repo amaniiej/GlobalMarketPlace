@@ -1,6 +1,7 @@
 // In your AnalyticsTools/page.tsx
 import React from 'react';
 
+import Curex from './components/Curex';
 import HScode from './components/HScode';
 import Incoterms from './components/Incoterms';
 import PriceTrends from './components/PriceTrends';
@@ -25,8 +26,11 @@ const AnalyticsToolsPage = () => {
             {/* Main Content Area */}
             <div className='container mx-auto space-y-8 px-4 py-6'>
                 <PriceTrends />
-                <Incoterms />
+                <div id='incoterms' className='...'>
+                    <Incoterms />
+                </div>
                 <HScode />
+                <Curex />
                 {/* Add more components here */}
             </div>
         </div>

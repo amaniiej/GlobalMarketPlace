@@ -5,33 +5,59 @@ import { useEffect, useRef, useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 
 import { SignUpModal } from './SignUpModal';
+import { Calculator, ChevronDown, FileText, Globe, TrendingUp } from 'lucide-react';
 
 // components/shared/Navbar.tsx
-// We'll create this
+
+// components/shared/Navbar.tsx
 
 const Navbar = () => {
     const [isVisible, setIsVisible] = useState(true);
     const [isScrolled, setIsScrolled] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
+    const [showAnalyticsDropdown, setShowAnalyticsDropdown] = useState(false);
+    const [currentHash, setCurrentHash] = useState('');
     const lastScrollY = useRef(0);
+    const pathname = usePathname();
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    // Analytics tools menu items
+    const analyticsTools = [
+        {
+            title: 'Price Trends',
+            url: '/AnalyticsTools#price-trends',
+            icon: <TrendingUp className='h-3.5 w-3.5' />
+        },
+        {
+            title: 'Incoterms',
+            url: '/AnalyticsTools#incoterms',
+            icon: <FileText className='h-3.5 w-3.5' />
+        },
+        {
+            title: 'HS Code Lookup',
+            url: '/AnalyticsTools#hs-code',
+            icon: <Calculator className='h-3.5 w-3.5' />
+        },
+        {
+            title: 'Currency Exchange',
+            url: '/AnalyticsTools#currency-exchange',
+            icon: <Globe className='h-3.5 w-3.5' />
+        }
+    ];
 
     useEffect(() => {
         const handleScroll = () => {
             const currentScrollY = window.scrollY;
-
-            // Update scrolled state for styling
             setIsScrolled(currentScrollY > 10);
 
-            // Show/hide logic - FIXED VERSION
             if (currentScrollY > lastScrollY.current && currentScrollY > 100) {
-                // Scrolling DOWN and past 100px → hide
                 setIsVisible(false);
             } else {
-                // Scrolling UP or at top → show
                 setIsVisible(true);
             }
 
@@ -44,13 +70,54 @@ const Navbar = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Track hash changes for active navigation
+    useEffect(() => {
+        const handleHashChange = () => {
+            setCurrentHash(window.location.hash);
+        };
+
+        // Check initial hash
+        handleHashChange();
+
+        // Listen for hash changes
+        window.addEventListener('hashchange', handleHashChange);
+
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setShowAnalyticsDropdown(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
+
     const menuItems = [
-        { title: 'Services', url: '/#services' },
-        { title: 'Analytics Tools', url: '/AnalyticsTools' },
-        { title: 'Blog', url: '/blog' },
-        { title: 'About Us', url: '/#about' },
-        { title: 'Contact', url: '/#contact' }
+        { title: 'Features', url: '/#Features', hash: '#Features' },
+        { title: 'Analytics Tools', url: '/AnalyticsTools', hash: '' },
+        { title: 'Blog', url: '/blog', hash: '' },
+        { title: 'About Us', url: '/#about', hash: '#about' },
+        { title: 'Contact', url: '/#contact', hash: '#contact' }
     ];
+
+    // Check if current page is active
+    const isActivePage = (url: string, hash: string = '') => {
+        // For hash links (like #contact, #services, #about)
+        if (hash && pathname === '/') {
+            return currentHash === hash;
+        }
+
+        // For regular pages
+        if (url === '/') return pathname === '/';
+
+        return pathname.startsWith(url);
+    };
 
     return (
         <>
@@ -77,25 +144,72 @@ const Navbar = () => {
                                     priority
                                 />
                             </div>
-                            <span className='-ml-2 text-lg font-semibold tracking-wider text-gray-900'>AGROSPACE</span>
+                            <span className='-ml-2 text-lg font-semibold tracking-wider text-gray-900 transition-colors duration-200 hover:text-emerald-700'>
+                                AGROSPACE
+                            </span>
                         </Link>
                     </div>
 
                     {/* CENTER — Navigation */}
-                    <div className='hidden flex-none items-center gap-9 md:flex'>
+                    <div className='hidden flex-none items-center gap-8 md:flex'>
                         {menuItems.map((item) => (
-                            <Link
-                                key={item.title}
-                                href={item.url}
-                                className='text-[0.95rem] font-medium tracking-wider text-gray-700 transition-transform duration-200 hover:scale-105 hover:text-emerald-700'>
-                                {item.title}
-                            </Link>
+                            <div key={item.title} className='relative'>
+                                {item.title === 'Analytics Tools' ? (
+                                    // Analytics Tools with dropdown
+                                    <div ref={dropdownRef} className='relative'>
+                                        <button
+                                            onClick={() => setShowAnalyticsDropdown(!showAnalyticsDropdown)}
+                                            className={`flex items-center gap-1 text-[0.95rem] font-medium tracking-wider transition-all duration-200 hover:scale-105 hover:text-emerald-700 ${
+                                                isActivePage(item.url, item.hash)
+                                                    ? 'font-semibold text-emerald-600 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]'
+                                                    : 'text-gray-700'
+                                            }`}>
+                                            {item.title}
+                                            <ChevronDown
+                                                className={`h-4 w-4 transition-transform duration-200 ${
+                                                    showAnalyticsDropdown ? 'rotate-180' : ''
+                                                }`}
+                                            />
+                                        </button>
+
+                                        {/* Dropdown Menu */}
+                                        {showAnalyticsDropdown && (
+                                            <div className='absolute top-full left-0 mt-2 w-56 rounded-lg border border-gray-200 bg-white/95 shadow-xl backdrop-blur-xl'>
+                                                <div className='p-2'>
+                                                    {analyticsTools.map((tool) => (
+                                                        <Link
+                                                            key={tool.title}
+                                                            href={tool.url}
+                                                            onClick={() => setShowAnalyticsDropdown(false)}
+                                                            className='flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-gray-700 transition-all hover:bg-emerald-50 hover:text-emerald-700'>
+                                                            <div className='flex h-7 w-7 items-center justify-center rounded-md bg-emerald-100 text-emerald-600'>
+                                                                {tool.icon}
+                                                            </div>
+                                                            <span className='font-medium'>{tool.title}</span>
+                                                        </Link>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    // Regular menu items
+                                    <Link
+                                        href={item.url}
+                                        className={`text-[0.95rem] font-medium tracking-wider transition-all duration-200 hover:scale-105 hover:text-emerald-700 ${
+                                            isActivePage(item.url, item.hash)
+                                                ? 'font-semibold text-emerald-600 drop-shadow-[0_0_8px_rgba(16,185,129,0.4)]'
+                                                : 'text-gray-700'
+                                        }`}>
+                                        {item.title}
+                                    </Link>
+                                )}
+                            </div>
                         ))}
                     </div>
 
                     {/* RIGHT — AUTH BUTTONS */}
                     <div className='flex flex-1 items-center justify-end gap-3'>
-                        {/* Log In Button - No highlight (outline) */}
                         <Button
                             asChild
                             variant='outline'
@@ -104,7 +218,6 @@ const Navbar = () => {
                             <Link href='/login'>Log In</Link>
                         </Button>
 
-                        {/* Sign Up Button - With highlight (solid green) */}
                         <Button
                             size='sm'
                             className='hidden rounded-full bg-emerald-600 text-white hover:bg-emerald-700 md:inline-flex'
@@ -115,7 +228,6 @@ const Navbar = () => {
                 </div>
             </nav>
 
-            {/* Sign Up Modal Popup */}
             <SignUpModal isOpen={showSignUpModal} onClose={() => setShowSignUpModal(false)} />
         </>
     );

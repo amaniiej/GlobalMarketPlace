@@ -7,6 +7,8 @@ import { AlertCircle, ExternalLink, FileText, Loader2, Search } from 'lucide-rea
 
 // /home/amanuel/Documents/AGROSPACE Site/src/app/AnalyticsTools/components/HSCodeLookup.tsx
 
+// /home/amanuel/Documents/AGROSPACE Site/src/app/AnalyticsTools/components/HSCodeLookup.tsx
+
 // HS code database (simplified for Ethiopian commodities)
 const hsCodeDatabase = [
     { code: '0901.11', name: 'Coffee, not roasted', description: 'Arabica coffee beans, not roasted' },
@@ -140,7 +142,7 @@ const HSCodeLookup = () => {
     };
 
     return (
-        <div className='rounded-xl border border-gray-200 bg-white shadow-lg'>
+        <div id='hs-code' className='rounded-xl border border-gray-200 bg-white shadow-lg'>
             {/* Header */}
             <div className='border-b border-gray-100 px-5 py-4'>
                 <div className='flex items-center justify-between'>
