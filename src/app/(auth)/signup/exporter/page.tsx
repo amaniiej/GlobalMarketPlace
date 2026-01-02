@@ -226,6 +226,23 @@ export default function ExporterSignupPage() {
                                         <p className='text-xs text-gray-500'>Must match your official registration</p>
                                     </div>
 
+                                    {/* Company Email (Login Email) */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Mail className='h-4 w-4' />
+                                            Company Email *
+                                        </label>
+                                        <input
+                                            type='email'
+                                            value={formData.companyEmail}
+                                            onChange={(e) => handleInputChange('companyEmail', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            placeholder='export@company.com'
+                                            required
+                                            disabled={loading}
+                                        />
+                                        <p className='text-xs text-gray-500'>Primary company email</p>
+                                    </div>
                                     {/* Create Password */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
@@ -245,24 +262,6 @@ export default function ExporterSignupPage() {
                                         <p className='text-xs text-gray-500'>
                                             Minimum 8 characters with letters and numbers
                                         </p>
-                                    </div>
-
-                                    {/* Company Email (Login Email) */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Mail className='h-4 w-4' />
-                                            Company Email *
-                                        </label>
-                                        <input
-                                            type='email'
-                                            value={formData.companyEmail}
-                                            onChange={(e) => handleInputChange('companyEmail', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
-                                            placeholder='export@company.com'
-                                            required
-                                            disabled={loading}
-                                        />
-                                        <p className='text-xs text-gray-500'>Primary company email</p>
                                     </div>
 
                                     {/* Confirm Password */}
@@ -285,6 +284,7 @@ export default function ExporterSignupPage() {
                                             disabled={loading}
                                         />
                                         {passwordError && <p className='text-xs text-red-500'>{passwordError}</p>}
+                                        <p className='text-xs text-gray-500'>Re-enter password to confirm</p>
                                     </div>
                                 </div>
                             </div>
