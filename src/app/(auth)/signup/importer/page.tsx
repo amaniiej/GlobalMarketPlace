@@ -240,27 +240,6 @@ export default function ImporterSignupPage() {
                                         />
                                     </div>
 
-                                    {/* Create Password */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Lock className='h-4 w-4' />
-                                            Create Password *
-                                        </label>
-                                        <input
-                                            type='password'
-                                            value={formData.password}
-                                            onChange={(e) => handleInputChange('password', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none disabled:opacity-50'
-                                            placeholder='Minimum 8 characters'
-                                            required
-                                            disabled={loading}
-                                            minLength={8}
-                                        />
-                                        <p className='text-xs text-gray-500'>
-                                            Minimum 8 characters with letters and numbers
-                                        </p>
-                                    </div>
-
                                     {/* Company Email */}
                                     <div className='space-y-3'>
                                         <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
@@ -276,28 +255,6 @@ export default function ImporterSignupPage() {
                                             required
                                             disabled={loading}
                                         />
-                                    </div>
-
-                                    {/* Confirm Password */}
-                                    <div className='space-y-3'>
-                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
-                                            <Lock className='h-4 w-4' />
-                                            Confirm Password *
-                                        </label>
-                                        <input
-                                            type='password'
-                                            value={formData.confirmPassword}
-                                            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                            className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:outline-none disabled:opacity-50 ${
-                                                passwordError
-                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
-                                                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
-                                            }`}
-                                            placeholder='Re-enter your password'
-                                            required
-                                            disabled={loading}
-                                        />
-                                        {passwordError && <p className='text-xs text-red-500'>{passwordError}</p>}
                                     </div>
 
                                     {/* Country of Operation */}
@@ -331,6 +288,50 @@ export default function ImporterSignupPage() {
                                             placeholder='https://yourcompany.com'
                                             disabled={loading}
                                         />
+                                    </div>
+
+                                    {/* Create Password */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Lock className='h-4 w-4' />
+                                            Create Password *
+                                        </label>
+                                        <input
+                                            type='password'
+                                            value={formData.password}
+                                            onChange={(e) => handleInputChange('password', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 focus:outline-none disabled:opacity-50'
+                                            placeholder='Minimum 8 characters'
+                                            required
+                                            disabled={loading}
+                                            minLength={8}
+                                        />
+                                        <p className='text-xs text-gray-500'>
+                                            Minimum 8 characters with letters and numbers
+                                        </p>
+                                    </div>
+
+                                    {/* Confirm Password */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Lock className='h-4 w-4' />
+                                            Confirm Password *
+                                        </label>
+                                        <input
+                                            type='password'
+                                            value={formData.confirmPassword}
+                                            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                                            className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:outline-none disabled:opacity-50 ${
+                                                passwordError
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-300 focus:border-blue-500 focus:ring-blue-200'
+                                            }`}
+                                            placeholder='Re-enter your password'
+                                            required
+                                            disabled={loading}
+                                        />
+                                        {passwordError && <p className='text-xs text-red-500'>{passwordError}</p>}
+                                        <p className='text-xs text-gray-500'>Re-enter password to confirm</p>
                                     </div>
                                 </div>
                             </div>
