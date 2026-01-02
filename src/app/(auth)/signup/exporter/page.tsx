@@ -2,13 +2,20 @@
 
 import { useState } from 'react';
 
-import { Building, CheckCircle, FileText, Globe, Mail, Phone, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+import { createClient } from '@/lib/supabase/client';
+
+import { Building, CheckCircle, FileText, Globe, Lock, Mail, Phone, User } from 'lucide-react';
 
 export default function ExporterSignupPage() {
+    const router = useRouter();
     const [formData, setFormData] = useState({
         // Company Information
         companyName: '',
         companyEmail: '',
+        password: '',
+        confirmPassword: '',
 
         // Contact Information
         contactPerson: '',
@@ -23,6 +30,9 @@ export default function ExporterSignupPage() {
         exportHistory: '',
         exportCapacity: ''
     });
+
+    const [loading, setLoading] = useState(false);
+    const [passwordError, setPasswordError] = useState('');
 
     const certificationOptions = [
         'EU Organic',
@@ -49,6 +59,10 @@ export default function ExporterSignupPage() {
 
     const handleInputChange = (field: string, value: string | string[] | { name: string; description: string }[]) => {
         setFormData((prev) => ({ ...prev, [field]: value }));
+        // Clear password error when user starts typing
+        if (field === 'password' || field === 'confirmPassword') {
+            setPasswordError('');
+        }
     };
 
     const toggleSelection = (field: 'certifications' | 'languages', value: string) => {
@@ -79,9 +93,85 @@ export default function ExporterSignupPage() {
         handleInputChange('otherCertifications', updated.length ? updated : [{ name: '', description: '' }]);
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log('Form submitted:', formData);
+        setLoading(true);
+        setPasswordError('');
+
+        try {
+            // Validate passwords match
+            if (formData.password !== formData.confirmPassword) {
+                throw new Error('Passwords do not match');
+            }
+
+            // Validate password strength
+            if (formData.password.length < 8) {
+                throw new Error('Password must be at least 8 characters');
+            }
+
+            const supabase = createClient();
+
+            // 1. Create user account with Supabase Auth
+            const { data: authData, error: authError } = await supabase.auth.signUp({
+                email: formData.companyEmail,
+                password: formData.password,
+                options: {
+                    emailRedirectTo: `${window.location.origin}/login`,
+                    data: {
+                        company_name: formData.companyName,
+                        role: 'exporter'
+                    }
+                }
+            });
+
+            if (authError) {
+                if (authError.message.includes('already registered')) {
+                    throw new Error('This email is already registered. Please try logging in instead.');
+                }
+                throw new Error(`Registration error: ${authError.message}`);
+            }
+
+            // 2. Save all the form data to our profiles table
+            const { error: profileError } = await supabase.from('profiles').insert({
+                id: authData.user?.id,
+                email: formData.companyEmail,
+                role: 'exporter',
+                company_name: formData.companyName,
+                contact_person: formData.contactPerson,
+                primary_phone: formData.primaryPhone,
+                secondary_phone: formData.secondaryPhone || null,
+                additional_email: formData.additionalEmail || null,
+                languages: formData.languages,
+                certifications: formData.certifications,
+                other_certifications: formData.otherCertifications,
+                export_history: formData.exportHistory || null,
+                export_capacity: formData.exportCapacity,
+                status: 'pending'
+            });
+
+            if (profileError) {
+                throw new Error(`Database error: ${profileError.message}`);
+            }
+
+            // 3. Show success message
+            alert('✅ Registration successful! Please check your email to verify your account.');
+            alert('📋 Your application is now pending admin verification. We will contact you within 48 hours.');
+
+            // 4. Redirect to login page
+            router.push('/login');
+        } catch (err: any) {
+            console.error('Signup error:', err);
+
+            if (err.message.includes('Passwords do not match')) {
+                setPasswordError('Passwords do not match');
+            } else if (err.message.includes('Password must be')) {
+                setPasswordError(err.message);
+            } else {
+                alert(`❌ Error: ${err.message}`);
+            }
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -131,8 +221,30 @@ export default function ExporterSignupPage() {
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
                                             placeholder='Enter legal company name'
                                             required
+                                            disabled={loading}
                                         />
                                         <p className='text-xs text-gray-500'>Must match your official registration</p>
+                                    </div>
+
+                                    {/* Create Password */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Lock className='h-4 w-4' />
+                                            Create Password *
+                                        </label>
+                                        <input
+                                            type='password'
+                                            value={formData.password}
+                                            onChange={(e) => handleInputChange('password', e.target.value)}
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            placeholder='Minimum 8 characters'
+                                            required
+                                            disabled={loading}
+                                            minLength={8}
+                                        />
+                                        <p className='text-xs text-gray-500'>
+                                            Minimum 8 characters with letters and numbers
+                                        </p>
                                     </div>
 
                                     {/* Company Email (Login Email) */}
@@ -148,8 +260,31 @@ export default function ExporterSignupPage() {
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
                                             placeholder='export@company.com'
                                             required
+                                            disabled={loading}
                                         />
                                         <p className='text-xs text-gray-500'>Primary company email</p>
+                                    </div>
+
+                                    {/* Confirm Password */}
+                                    <div className='space-y-3'>
+                                        <label className='flex items-center gap-2 text-sm font-medium text-gray-700'>
+                                            <Lock className='h-4 w-4' />
+                                            Confirm Password *
+                                        </label>
+                                        <input
+                                            type='password'
+                                            value={formData.confirmPassword}
+                                            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                                            className={`w-full rounded-lg border px-4 py-3 focus:ring-2 focus:outline-none ${
+                                                passwordError
+                                                    ? 'border-red-500 focus:border-red-500 focus:ring-red-200'
+                                                    : 'border-gray-300 focus:border-emerald-500 focus:ring-emerald-200'
+                                            }`}
+                                            placeholder='Re-enter your password'
+                                            required
+                                            disabled={loading}
+                                        />
+                                        {passwordError && <p className='text-xs text-red-500'>{passwordError}</p>}
                                     </div>
                                 </div>
                             </div>
@@ -183,6 +318,7 @@ export default function ExporterSignupPage() {
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
                                             placeholder='Export sales manager name'
                                             required
+                                            disabled={loading}
                                         />
                                     </div>
 
@@ -199,6 +335,7 @@ export default function ExporterSignupPage() {
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
                                             placeholder='+251 9XX XXX XXX'
                                             required
+                                            disabled={loading}
                                         />
                                     </div>
 
@@ -214,6 +351,7 @@ export default function ExporterSignupPage() {
                                             onChange={(e) => handleInputChange('secondaryPhone', e.target.value)}
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
                                             placeholder='+251 9XX XXX XXX'
+                                            disabled={loading}
                                         />
                                     </div>
 
@@ -229,6 +367,7 @@ export default function ExporterSignupPage() {
                                             onChange={(e) => handleInputChange('additionalEmail', e.target.value)}
                                             className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
                                             placeholder='sales@company.com'
+                                            disabled={loading}
                                         />
                                     </div>
 
@@ -244,11 +383,12 @@ export default function ExporterSignupPage() {
                                                     key={language}
                                                     type='button'
                                                     onClick={() => toggleSelection('languages', language)}
+                                                    disabled={loading}
                                                     className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition-all ${
                                                         formData.languages.includes(language)
                                                             ? 'bg-emerald-100 text-emerald-700 ring-2 ring-emerald-500 ring-offset-2'
                                                             : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                                    }`}>
+                                                    } disabled:cursor-not-allowed disabled:opacity-50`}>
                                                     {formData.languages.includes(language) && (
                                                         <CheckCircle className='h-4 w-4' />
                                                     )}
@@ -292,11 +432,12 @@ export default function ExporterSignupPage() {
                                                     key={cert}
                                                     type='button'
                                                     onClick={() => toggleSelection('certifications', cert)}
+                                                    disabled={loading}
                                                     className={`flex items-center justify-between rounded-lg border p-3 text-left text-sm transition-all ${
                                                         formData.certifications.includes(cert)
                                                             ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
                                                             : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
-                                                    }`}>
+                                                    } disabled:cursor-not-allowed disabled:opacity-50`}>
                                                     <span>{cert}</span>
                                                     {formData.certifications.includes(cert) && (
                                                         <CheckCircle className='h-4 w-4' />
@@ -325,8 +466,9 @@ export default function ExporterSignupPage() {
                                                                 onChange={(e) =>
                                                                     handleOtherCertChange(index, 'name', e.target.value)
                                                                 }
-                                                                className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200'
+                                                                className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 disabled:opacity-50'
                                                                 placeholder='Certification name (e.g., Ethiopia Quality Mark)'
+                                                                disabled={loading}
                                                             />
                                                         </div>
                                                         <div className='flex-1 space-y-2'>
@@ -340,15 +482,17 @@ export default function ExporterSignupPage() {
                                                                         e.target.value
                                                                     )
                                                                 }
-                                                                className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200'
+                                                                className='w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-emerald-500 focus:ring-1 focus:ring-emerald-200 disabled:opacity-50'
                                                                 placeholder='Brief description (50 chars)'
                                                                 maxLength={50}
+                                                                disabled={loading}
                                                             />
                                                         </div>
                                                         <button
                                                             type='button'
                                                             onClick={() => removeOtherCert(index)}
-                                                            className='flex h-10 items-center justify-center rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200'>
+                                                            disabled={loading}
+                                                            className='flex h-10 items-center justify-center rounded-lg bg-red-100 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200 disabled:opacity-50'>
                                                             ×
                                                         </button>
                                                     </div>
@@ -357,7 +501,8 @@ export default function ExporterSignupPage() {
                                             <button
                                                 type='button'
                                                 onClick={addOtherCert}
-                                                className='flex items-center gap-2 rounded-lg border-2 border-dashed border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 transition-all hover:border-emerald-400 hover:bg-emerald-50'>
+                                                disabled={loading}
+                                                className='flex items-center gap-2 rounded-lg border-2 border-dashed border-emerald-300 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-700 transition-all hover:border-emerald-400 hover:bg-emerald-50 disabled:opacity-50'>
                                                 ➕ Add Another Certification
                                             </button>
                                         </div>
@@ -372,9 +517,10 @@ export default function ExporterSignupPage() {
                                         <textarea
                                             value={formData.exportHistory}
                                             onChange={(e) => handleInputChange('exportHistory', e.target.value)}
-                                            className='min-h-25 w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            className='min-h-25 w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none disabled:opacity-50'
                                             placeholder='Countries exported to, key buyers, annual volumes, years of experience...'
                                             rows={3}
+                                            disabled={loading}
                                         />
                                         <p className='text-xs text-gray-500'>
                                             Helps buyers understand your experience (optional)
@@ -391,9 +537,10 @@ export default function ExporterSignupPage() {
                                             type='text'
                                             value={formData.exportCapacity}
                                             onChange={(e) => handleInputChange('exportCapacity', e.target.value)}
-                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none'
+                                            className='w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200 focus:outline-none disabled:opacity-50'
                                             placeholder='Example: 100 tons, 5000 cartons, 2x40ft containers'
                                             required
+                                            disabled={loading}
                                         />
                                         <p className='text-xs text-gray-500'>
                                             Specify unit (tons, kg, containers, cartons, etc.)
@@ -417,13 +564,22 @@ export default function ExporterSignupPage() {
                                 <button
                                     type='button'
                                     onClick={() => window.history.back()}
-                                    className='rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50'>
+                                    disabled={loading}
+                                    className='rounded-lg border border-gray-300 px-6 py-3 font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-50'>
                                     Cancel
                                 </button>
                                 <button
                                     type='submit'
-                                    className='rounded-lg bg-[#09704f] px-8 py-3 font-bold text-white shadow-lg hover:bg-[#115140]'>
-                                    Submit for Verification
+                                    disabled={loading}
+                                    className='rounded-lg bg-[#09704f] px-8 py-3 font-bold text-white shadow-lg hover:bg-[#115140] disabled:opacity-50'>
+                                    {loading ? (
+                                        <span className='flex items-center justify-center gap-2'>
+                                            <div className='h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent'></div>
+                                            Processing...
+                                        </span>
+                                    ) : (
+                                        'Submit for Verification'
+                                    )}
                                 </button>
                             </div>
 

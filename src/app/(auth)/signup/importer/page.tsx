@@ -7,6 +7,7 @@ import {
     Building,
     CheckCircle,
     Globe,
+    Lock,
     Mail,
     Package,
     Phone,
