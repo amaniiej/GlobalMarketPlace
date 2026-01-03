@@ -111,15 +111,27 @@ export default function ExporterSignupPage() {
 
             const supabase = createClient();
 
-            // 1. Create user account with Supabase Auth
+            // ONLY create auth user - profile will be auto-created by database trigger
             const { data: authData, error: authError } = await supabase.auth.signUp({
                 email: formData.companyEmail,
                 password: formData.password,
                 options: {
                     emailRedirectTo: `${window.location.origin}/login`,
                     data: {
+                        // This data goes to raw_user_meta_data
                         company_name: formData.companyName,
-                        role: 'exporter'
+                        role: 'exporter',
+                        contact_person: formData.contactPerson,
+                        primary_phone: formData.primaryPhone,
+                        secondary_phone: formData.secondaryPhone,
+                        additional_email: formData.additionalEmail,
+                        // Convert arrays to comma-separated strings for JSON storage
+                        languages: formData.languages.join(','),
+                        certifications: formData.certifications.join(','),
+                        // Convert other certifications to JSON string
+                        other_certifications: JSON.stringify(formData.otherCertifications),
+                        export_history: formData.exportHistory,
+                        export_capacity: formData.exportCapacity
                     }
                 }
             });
@@ -131,33 +143,11 @@ export default function ExporterSignupPage() {
                 throw new Error(`Registration error: ${authError.message}`);
             }
 
-            // 2. Save all the form data to our profiles table
-            const { error: profileError } = await supabase.from('profiles').insert({
-                id: authData.user?.id,
-                email: formData.companyEmail,
-                role: 'exporter',
-                company_name: formData.companyName,
-                contact_person: formData.contactPerson,
-                primary_phone: formData.primaryPhone,
-                secondary_phone: formData.secondaryPhone || null,
-                additional_email: formData.additionalEmail || null,
-                languages: formData.languages,
-                certifications: formData.certifications,
-                other_certifications: formData.otherCertifications,
-                export_history: formData.exportHistory || null,
-                export_capacity: formData.exportCapacity,
-                status: 'pending'
-            });
-
-            if (profileError) {
-                throw new Error(`Database error: ${profileError.message}`);
-            }
-
-            // 3. Show success message
+            // Show success message
             alert('✅ Registration successful! Please check your email to verify your account.');
             alert('📋 Your application is now pending admin verification. We will contact you within 48 hours.');
 
-            // 4. Redirect to login page
+            // Redirect to login page
             router.push('/login');
         } catch (err: any) {
             console.error('Signup error:', err);
