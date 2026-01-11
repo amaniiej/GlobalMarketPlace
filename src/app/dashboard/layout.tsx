@@ -72,6 +72,5 @@ export default function DashboardRootLayout({ children }: { children: React.Reac
         );
     }
 
-    // Just render children - the nested layouts will handle the sidebars
     return <>{children}</>;
 }

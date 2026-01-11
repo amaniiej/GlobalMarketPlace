@@ -97,9 +97,9 @@ export default function ExporterDashboard() {
     }
 
     return (
-        <div className='p-6 lg:p-8'>
+        <div className='py-4 lg:p-8'>
             {/* Welcome Header */}
-            <div className='container mx-auto mb-8 px-4 py-8'>
+            <div className='mx-auto mb-8 px-4 py-16'>
                 <h1 className='mb-2 text-3xl font-bold text-emerald-900'>
                     Welcome back, {userProfile?.contact_person || 'Exporter'}! 👋
                 </h1>
