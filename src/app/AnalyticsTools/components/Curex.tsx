@@ -1,19 +1,24 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import {
-    Activity,
-    ArrowRightLeft,
-    Calculator,
-    DollarSign,
-    Euro,
-    Globe,
-    PoundSterling,
-    RefreshCw,
-    TrendingDown,
-    TrendingUp
-} from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+import { Activity, ArrowRightLeft, Calculator, DollarSign, Euro, Globe, PoundSterling, RefreshCw } from 'lucide-react';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+interface FxRate {
+    id: number;
+    currency: string;
+    rate: number;
+    change_percentage: string;
+    change_amount: number;
+    last_updated: string;
+    updated_at: string;
+}
 
 interface Currency {
     code: string;
@@ -25,88 +30,161 @@ interface Currency {
     lastUpdated: string;
     trend: 'up' | 'down' | 'stable';
     changePercent: number;
+    pair: string;
 }
 
-const initialCurrencies: Currency[] = [
+// ✅ FIXED: No emojis in object literals, proper typing
+const CURRENCY_CONFIG: Currency[] = [
     {
         code: 'USD',
         name: 'US Dollar',
         symbol: '$',
+        flag: 'US',
         icon: <DollarSign className='h-3.5 w-3.5' />,
-        flag: '🇺🇸',
         rate: 1,
         lastUpdated: 'Now',
-        trend: 'up',
-        changePercent: 0.12
+        trend: 'stable',
+        changePercent: 0,
+        pair: 'USD/USD'
     },
     {
         code: 'EUR',
         name: 'Euro',
         symbol: '€',
+        flag: 'EU',
         icon: <Euro className='h-3.5 w-3.5' />,
-        flag: '🇪🇺',
-        rate: 0.9215,
-        lastUpdated: '2 min',
-        trend: 'down',
-        changePercent: -0.25
+        rate: 0,
+        lastUpdated: 'Now',
+        trend: 'stable',
+        changePercent: 0,
+        pair: 'USD/EUR'
     },
     {
         code: 'GBP',
         name: 'British Pound',
         symbol: '£',
+        flag: 'GB',
         icon: <PoundSterling className='h-3.5 w-3.5' />,
-        flag: '🇬🇧',
-        rate: 0.789,
-        lastUpdated: '5 min',
+        rate: 0,
+        lastUpdated: 'Now',
         trend: 'stable',
-        changePercent: 0.05
+        changePercent: 0,
+        pair: 'USD/GBP'
     },
     {
         code: 'ETB',
         name: 'Ethiopian Birr',
-        symbol: 'ETB',
+        symbol: 'Br',
+        flag: 'ET',
         icon: <span className='font-mono text-sm font-bold'>Br</span>,
-        flag: '🇪🇹',
-        rate: 56.5,
-        lastUpdated: '10 min',
-        trend: 'up',
-        changePercent: 0.35
+        rate: 0,
+        lastUpdated: 'Now',
+        trend: 'stable',
+        changePercent: 0,
+        pair: 'USD/ETB'
     },
     {
         code: 'CNY',
         name: 'Chinese Yuan',
-        symbol: 'CNY',
+        symbol: '¥',
+        flag: 'CN',
         icon: <span className='font-mono text-sm font-bold'>¥</span>,
-        flag: '🇨🇳',
-        rate: 7.23,
-        lastUpdated: '8 min',
-        trend: 'up',
-        changePercent: 0.22
+        rate: 0,
+        lastUpdated: 'Now',
+        trend: 'stable',
+        changePercent: 0,
+        pair: 'USD/CNY'
     },
     {
         code: 'AED',
         name: 'UAE Dirham',
-        symbol: 'AED',
+        symbol: 'د.إ',
+        flag: 'AE',
         icon: <span className='font-mono text-sm font-bold'>د.إ</span>,
-        flag: '🇦🇪',
-        rate: 3.6725,
-        lastUpdated: '15 min',
+        rate: 0,
+        lastUpdated: 'Now',
         trend: 'stable',
-        changePercent: 0
+        changePercent: 0,
+        pair: 'USD/AED'
     }
 ];
 
 const CurrencyExchange = () => {
-    const [currencies, setCurrencies] = useState(initialCurrencies);
+    const [currencies, setCurrencies] = useState<Currency[]>(CURRENCY_CONFIG);
     const [amount, setAmount] = useState('1000');
-    const [fromCurrency, setFromCurrency] = useState(initialCurrencies[0]);
-    const [toCurrency, setToCurrency] = useState(initialCurrencies[3]);
-    const [result, setResult] = useState(56500);
-    const [exchangeRate, setExchangeRate] = useState(56.5);
+    const [fromCurrency, setFromCurrency] = useState<Currency>(CURRENCY_CONFIG[0]);
+    const [toCurrency, setToCurrency] = useState<Currency>(CURRENCY_CONFIG[3]);
+    const [result, setResult] = useState(0);
+    const [exchangeRate, setExchangeRate] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
     const [lastUpdated, setLastUpdated] = useState('Just now');
+    const [subscriptionStatus, setSubscriptionStatus] = useState<'connecting' | 'connected' | 'disconnected'>(
+        'connecting'
+    );
 
-    // Calculate exchange
+    // ✅ FIXED: Proper Supabase fetch for YOUR schema
+    const fetchRatesFromSupabase = useCallback(async () => {
+        if (!supabaseUrl || !supabaseAnonKey) {
+            console.warn('Supabase env vars missing');
+
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const { data, error } = await supabase
+                .from('fx_rates')
+                .select('currency,rate,change_percentage,last_updated')
+                .in('currency', ['USD', 'EUR', 'GBP', 'ETB', 'CNY', 'AED'])
+                .order('updated_at', { ascending: false });
+
+            if (error) throw error;
+
+            if (data && data.length > 0) {
+                const ratesMap = new Map<string, FxRate>();
+                data.forEach((row: FxRate) => {
+                    if (
+                        !ratesMap.has(row.currency) ||
+                        new Date(row.updated_at) > new Date(ratesMap.get(row.currency)?.updated_at || '')
+                    ) {
+                        ratesMap.set(row.currency, row);
+                    }
+                });
+
+                setCurrencies((prevCurrencies) =>
+                    prevCurrencies.map((currency) => {
+                        const supabaseRate = ratesMap.get(currency.code);
+                        if (supabaseRate) {
+                            const changePercent = parseFloat(supabaseRate.change_percentage.replace('%', '')) || 0;
+                            const trend: 'up' | 'down' | 'stable' =
+                                changePercent > 0.1 ? 'up' : changePercent < -0.1 ? 'down' : 'stable';
+
+                            return {
+                                ...currency,
+                                rate: Number(supabaseRate.rate) || 0,
+                                changePercent,
+                                trend,
+                                lastUpdated: new Date(supabaseRate.last_updated).toLocaleString([], {
+                                    hour: '2-digit',
+                                    minute: '2-digit'
+                                })
+                            };
+                        }
+
+                        return currency;
+                    })
+                );
+
+                setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+            }
+        } catch (error) {
+            console.error('Supabase fetch error:', error);
+        } finally {
+            setIsLoading(false);
+        }
+    }, []);
+
+    // Exchange calculation
     useEffect(() => {
         const numericAmount = parseFloat(amount) || 0;
         if (fromCurrency.code === toCurrency.code) {
@@ -120,48 +198,104 @@ const CurrencyExchange = () => {
         setResult(numericAmount * rate);
     }, [amount, fromCurrency, toCurrency]);
 
+    // Initial load + 5hr polling ✅ FIXED useEffect
+    useEffect(() => {
+        fetchRatesFromSupabase();
+
+        const interval = setInterval(
+            () => {
+                fetchRatesFromSupabase();
+            },
+            5 * 60 * 60 * 1000
+        ); // 5 hours
+
+        return () => {
+            clearInterval(interval);
+        };
+    }, [fetchRatesFromSupabase]);
+
+    // ✅ REALTIME SUBSCRIPTION - Updates ONLY rate + change%
+    useEffect(() => {
+        if (!supabaseUrl || !supabaseAnonKey) return;
+
+        const channel = supabase
+            .channel('fx_rates_live')
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT,UPDATE',
+                    schema: 'public',
+                    table: 'fx_rates',
+                    filter: 'currency=in.(USD,EUR,GBP,ETB,CNY,AED)'
+                },
+                (payload) => {
+                    console.log('🟢 LIVE UPDATE:', payload.new);
+
+                    // Update ONLY matching currency (rate + change%)
+                    setCurrencies((prev) =>
+                        prev.map((currency) => {
+                            if (currency.code === payload.new.currency) {
+                                const changePercent = parseFloat(payload.new.change_percentage.replace('%', '')) || 0;
+                                const trend: 'up' | 'down' | 'stable' =
+                                    changePercent > 0.1 ? 'up' : changePercent < -0.1 ? 'down' : 'stable';
+
+                                return {
+                                    ...currency,
+                                    rate: Number(payload.new.rate),
+                                    changePercent,
+                                    trend,
+                                    lastUpdated: 'Live'
+                                };
+                            }
+
+                            return currency;
+                        })
+                    );
+                }
+            )
+            .subscribe((status) => {
+                setSubscriptionStatus(status === 'SUBSCRIBED' ? 'connected' : 'disconnected');
+            });
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, []);
+
     const swapCurrencies = () => {
-        setFromCurrency(toCurrency);
-        setToCurrency(fromCurrency);
+        if (fromCurrency && toCurrency) {
+            setFromCurrency(toCurrency);
+            setToCurrency(fromCurrency);
+        }
     };
 
-    const fetchExchangeRates = async () => {
-        setIsLoading(true);
-        await new Promise((r) => setTimeout(r, 800));
-        setCurrencies((prev) =>
-            prev.map((c) => ({
-                ...c,
-                rate: c.rate * (1 + (Math.random() - 0.5) * 0.002),
-                changePercent: (Math.random() - 0.5) * 0.2,
-                trend: Math.random() > 0.6 ? 'up' : Math.random() < 0.4 ? 'down' : 'stable',
-                lastUpdated: 'Now'
-            }))
-        );
-        setLastUpdated(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-        setIsLoading(false);
+    const refreshRates = async () => {
+        await fetchRatesFromSupabase();
     };
 
     return (
         <div id='currency-exchange' className='rounded-xl border border-gray-200 bg-white shadow-lg'>
-            {/* Header - Compact */}
+            {/* Header */}
             <div className='flex items-center justify-between border-b border-gray-100 px-4 py-3'>
                 <div>
                     <h2 className='text-base font-semibold text-gray-900'>Currency Exchange</h2>
-                    <p className='text-xs text-gray-500'>Live FX for trade</p>
+                    <p className='text-xs text-gray-500'>
+                        Live FX {subscriptionStatus === 'connected' ? '● Live' : '● Polling'}
+                    </p>
                 </div>
                 <button
-                    onClick={fetchExchangeRates}
+                    onClick={refreshRates}
                     disabled={isLoading}
-                    className='flex items-center gap-1.5 rounded-lg bg-[#09704f] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#075c43]'>
+                    className='flex items-center gap-1.5 rounded-lg bg-[#09704f] px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-[#075c43] disabled:opacity-50'>
                     <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
                     {isLoading ? '...' : 'Refresh'}
                 </button>
             </div>
 
-            {/* Main Content - Compact */}
+            {/* Converter - YOUR ORIGINAL JSX */}
             <div className='p-4'>
                 <div className='grid gap-4 lg:grid-cols-2'>
-                    {/* Left Column: Converter - Compact */}
+                    {/* Left: Converter */}
                     <div className='rounded-lg border border-gray-200 bg-gray-50 p-4'>
                         <div className='mb-4 flex items-center justify-between'>
                             <div className='flex items-center gap-2'>
@@ -170,15 +304,13 @@ const CurrencyExchange = () => {
                             </div>
                             <div className='text-xs text-gray-500'>{lastUpdated}</div>
                         </div>
-
-                        {/* Amount Input - Compact */}
                         <div className='mb-3'>
                             <div className='flex gap-2'>
                                 <input
                                     value={amount}
                                     onChange={(e) => setAmount(e.target.value)}
                                     type='number'
-                                    className='flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium focus:border-[#09704f] focus:ring-1 focus:ring-[#09704f] focus:outline-none'
+                                    className='flex-1 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium focus:border-[#09704f] focus:ring-1 focus:ring-[#09704f]'
                                     placeholder='Amount'
                                 />
                                 <select
@@ -187,26 +319,22 @@ const CurrencyExchange = () => {
                                         const selected = currencies.find((c) => c.code === e.target.value);
                                         if (selected) setFromCurrency(selected);
                                     }}
-                                    className='w-20 rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs font-medium focus:border-[#09704f] focus:outline-none'>
+                                    className='w-20 rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs font-medium focus:border-[#09704f]'>
                                     {currencies.map((currency) => (
-                                        <option key={`from-${currency.code}`} value={currency.code}>
+                                        <option key={currency.code} value={currency.code}>
                                             {currency.code}
                                         </option>
                                     ))}
                                 </select>
                             </div>
                         </div>
-
-                        {/* Swap Button - Compact */}
                         <div className='mb-3 flex justify-center'>
                             <button
                                 onClick={swapCurrencies}
-                                className='flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white transition-colors hover:border-[#09704f] hover:text-[#09704f]'>
+                                className='flex h-8 w-8 items-center justify-center rounded-full border border-gray-300 bg-white hover:border-[#09704f] hover:text-[#09704f]'>
                                 <ArrowRightLeft className='h-3.5 w-3.5' />
                             </button>
                         </div>
-
-                        {/* Result - Compact */}
                         <div className='mb-3'>
                             <div className='flex gap-2'>
                                 <div className='flex-1 rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900'>
@@ -221,17 +349,15 @@ const CurrencyExchange = () => {
                                         const selected = currencies.find((c) => c.code === e.target.value);
                                         if (selected) setToCurrency(selected);
                                     }}
-                                    className='w-20 rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs font-medium focus:border-[#09704f] focus:outline-none'>
+                                    className='w-20 rounded-lg border border-gray-300 bg-white px-2 py-2 text-xs font-medium focus:border-[#09704f]'>
                                     {currencies.map((currency) => (
-                                        <option key={`to-${currency.code}`} value={currency.code}>
+                                        <option key={currency.code} value={currency.code}>
                                             {currency.code}
                                         </option>
                                     ))}
                                 </select>
                             </div>
                         </div>
-
-                        {/* Exchange Rate - Compact */}
                         <div className='rounded-lg border border-gray-200 bg-white p-3'>
                             <div className='text-center'>
                                 <div className='text-[10px] text-gray-500'>Exchange Rate</div>
@@ -242,7 +368,7 @@ const CurrencyExchange = () => {
                         </div>
                     </div>
 
-                    {/* Right Column: Live Rates - Compact */}
+                    {/* Right: Live Rates */}
                     <div>
                         <div className='mb-3 flex items-center justify-between'>
                             <div className='flex items-center gap-2'>
@@ -251,8 +377,6 @@ const CurrencyExchange = () => {
                             </div>
                             <div className='text-xs text-gray-500'>vs USD</div>
                         </div>
-
-                        {/* Rates Grid - Compact */}
                         <div className='grid grid-cols-2 gap-2'>
                             {currencies.map((c) => (
                                 <div
@@ -264,7 +388,7 @@ const CurrencyExchange = () => {
                                     }`}>
                                     <div className='flex items-center justify-between'>
                                         <div className='flex items-center gap-1.5'>
-                                            <span className='text-sm'>{c.flag}</span>
+                                            <span className='text-sm font-bold'>{c.flag}</span>
                                             <div>
                                                 <div className='text-xs font-semibold text-gray-900'>{c.code}</div>
                                                 <div
@@ -275,13 +399,13 @@ const CurrencyExchange = () => {
                                             </div>
                                         </div>
                                         <div className='text-right'>
-                                            <div className='text-xs font-bold text-gray-900'>{c.rate.toFixed(3)}</div>
+                                            <div className='text-xs font-bold text-gray-900'>{c.rate.toFixed(4)}</div>
                                             <div
                                                 className={`mt-0.5 text-[10px] ${
                                                     c.trend === 'up'
-                                                        ? 'text-green-600'
+                                                        ? 'font-medium text-green-600'
                                                         : c.trend === 'down'
-                                                          ? 'text-red-600'
+                                                          ? 'font-medium text-red-600'
                                                           : 'text-gray-500'
                                                 }`}>
                                                 {c.changePercent >= 0 ? '+' : ''}
@@ -292,8 +416,6 @@ const CurrencyExchange = () => {
                                 </div>
                             ))}
                         </div>
-
-                        {/* Key Info - Compact */}
                         <div className='mt-3 rounded-lg border border-blue-100 bg-blue-50 p-3'>
                             <div className='flex items-start gap-2'>
                                 <div className='mt-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-blue-100'>
@@ -310,23 +432,26 @@ const CurrencyExchange = () => {
                     </div>
                 </div>
 
-                {/* API Note - Compact */}
+                {/* Status */}
                 <div className='mt-4 rounded-lg border border-green-100 bg-green-50 p-3'>
                     <div className='flex items-start gap-2'>
                         <Globe className='mt-0.5 h-3.5 w-3.5 shrink-0 text-green-600' />
                         <div className='flex-1'>
-                            <div className='text-xs font-medium text-green-900'>API Ready</div>
-                            <div className='mt-0.5 text-[11px] text-green-700'>Connect to live forex APIs via n8n</div>
+                            <div className='text-xs font-medium text-green-900'>
+                                Supabase {subscriptionStatus === 'connected' ? '✅ Live' : '🔄 Polling'}
+                            </div>
+                            <div className='mt-0.5 text-[11px] text-green-700'>
+                                Updates rate + change% from fx_rates table
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            {/* Footer - Compact */}
             <div className='border-t border-gray-100 bg-gray-50 px-4 py-2'>
-                <div className='flex items-center justify-between'>
-                    <div className='text-[10px] text-gray-500'>Rates update automatically</div>
-                    <div className='text-[10px] text-gray-500'>Indicative rates</div>
+                <div className='flex items-center justify-between text-[10px] text-gray-500'>
+                    <span>Auto-updates every 5hrs + realtime</span>
+                    <span>Indicative rates via n8n</span>
                 </div>
             </div>
         </div>

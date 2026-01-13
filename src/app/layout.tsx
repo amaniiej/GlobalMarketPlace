@@ -1,10 +1,26 @@
 // src/app/layout.tsx
+'use client';
+
+// Add this since we need to use hooks
+import { usePathname } from 'next/navigation';
+
 import { Footer } from '@/components/shared/Footer';
 import Navbar from '@/components/shared/Navbar';
 
 import './globals.css';
 
+// src/app/layout.tsx
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+    const pathname = usePathname();
+
+    // Check if we're on dashboard or auth pages
+    const hideNavbarFooter =
+        pathname?.startsWith('/dashboard') ||
+        pathname?.startsWith('/auth') ||
+        pathname?.startsWith('/login') ||
+        pathname?.startsWith('/signup');
+
     return (
         <html lang='en' className='scroll-smooth'>
             <head>
@@ -19,9 +35,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 />
             </head>
             <body className='overflow-x-hidden'>
-                <Navbar />
+                {!hideNavbarFooter && <Navbar />}
                 <main className='min-h-screen'>{children}</main>
-                <Footer />
+                {!hideNavbarFooter && <Footer />}
             </body>
         </html>
     );

@@ -1,478 +1,515 @@
-// app/dashboard/importer/page.tsx
+// /home/amanuel/Documents/AGROSPACE Site/src/app/dashboard/importer/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
+import Link from 'next/link';
 
 import {
     AlertCircle,
+    ArrowUpRight,
     BarChart3,
     Calculator,
     CheckCircle,
-    Clock,
-    Coffee,
+    ChevronRight,
     DollarSign,
-    Download,
-    Eye,
-    Filter,
+    ExternalLink,
+    FileText,
     Globe,
-    Heart,
-    MapPin,
-    MessageSquare,
     Package,
-    Plus,
+    Percent,
     Search,
-    ShoppingCart,
+    Shield,
     Star,
+    TrendingDown,
     TrendingUp,
-    Users
+    Zap
 } from 'lucide-react';
 
-// app/dashboard/importer/page.tsx
+// /home/amanuel/Documents/AGROSPACE Site/src/app/dashboard/importer/page.tsx
 
-// app/dashboard/importer/page.tsx
+// /home/amanuel/Documents/AGROSPACE Site/src/app/dashboard/importer/page.tsx
 
-// Metric Card Component for Importer
-function ImporterMetricCard({ title, value, change, icon: Icon, trend = 'up', description }: any) {
-    return (
-        <Card className='group transition-all duration-300 hover:border-blue-300 hover:shadow-lg'>
-            <CardHeader className='flex flex-row items-center justify-between pb-2'>
-                <CardTitle className='text-sm font-medium text-slate-600'>{title}</CardTitle>
-                <div className={`rounded-lg p-2 ${trend === 'up' ? 'bg-blue-100' : 'bg-amber-100'}`}>
-                    <Icon className={`h-4 w-4 ${trend === 'up' ? 'text-blue-600' : 'text-amber-600'}`} />
-                </div>
-            </CardHeader>
-            <CardContent>
-                <div className='text-2xl font-bold text-slate-900'>{value}</div>
-                <div className={`text-sm ${trend === 'up' ? 'text-blue-600' : 'text-amber-600'}`}>
-                    {trend === 'up' ? '↑' : '↓'} {change}
-                </div>
-                {description && <p className='mt-2 text-xs text-slate-500'>{description}</p>}
-            </CardContent>
-        </Card>
-    );
-}
+// /home/amanuel/Documents/AGROSPACE Site/src/app/dashboard/importer/page.tsx
+
+// /home/amanuel/Documents/AGROSPACE Site/src/app/dashboard/importer/page.tsx
 
 export default function ImporterDashboard() {
-    const [loading, setLoading] = useState(true);
-    const [userProfile, setUserProfile] = useState<any>(null);
+    const [savedShipments] = useState(3);
+    const [maxShipments] = useState(3);
+    const [hsLookups] = useState(18);
+    const [maxHsLookups] = useState(20);
+    const [fxAlerts] = useState(2);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            const supabase = createClient();
-            const {
-                data: { user }
-            } = await supabase.auth.getUser();
+    // Live market data
+    const ecxPrices = [
+        { commodity: 'Coffee (Arabica)', price: '3,450 ETB/kg', change: '+2.4%', isUp: true, isSaved: true },
+        { commodity: 'Sesame Seeds', price: '5,210 ETB/kg', change: '-1.2%', isUp: false, isSaved: true },
+        { commodity: 'Oil Seeds', price: '3,120 ETB/kg', change: '-0.3%', isUp: false, isSaved: false }
+    ];
 
-            if (user) {
-                const { data: profile } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    const fxPairs = [
+        { pair: 'USD/ETB', rate: '57.25', change: '+0.15' },
+        { pair: 'EUR/ETB', rate: '62.10', change: '-0.08' },
+        { pair: 'GBP/ETB', rate: '72.45', change: '+0.22' }
+    ];
 
-                if (profile) {
-                    setUserProfile(profile);
-                }
-            }
-            setLoading(false);
-        };
+    const savedShipmentsList = [
+        { id: 1, route: 'Addis → Hamburg', incoterm: 'CIF', price: '$12,450', commodity: 'Coffee' },
+        { id: 2, route: 'Dire Dawa → Rotterdam', incoterm: 'FOB', price: '$8,720', commodity: 'Sesame' },
+        { id: 3, route: 'Hawassa → Antwerp', incoterm: 'EXW', price: '$15,300', commodity: 'Chat' }
+    ];
 
-        fetchUserData();
-    }, []);
+    const savedHsCodes = [
+        { code: '0901.11.00', description: 'Coffee, not decaffeinated', duty: 'Free' },
+        { code: '1207.40.00', description: 'Sesame seeds', duty: '2.6¢/kg' },
+        { code: '1404.90.00', description: 'Chat', duty: 'Free' },
+        { code: '0713.33.40', description: 'Kidney beans', duty: '1.5¢/kg' }
+    ];
 
-    if (loading) {
-        return (
-            <div className='flex h-screen items-center justify-center'>
-                <div className='text-center'>
-                    <div className='mx-auto h-8 w-8 animate-spin rounded-full border-b-2 border-blue-600'></div>
-                    <p className='mt-4 text-blue-700'>Loading your dashboard...</p>
-                </div>
-            </div>
-        );
-    }
+    const essentialTools = [
+        {
+            title: 'Incoterm Comparator',
+            description: 'Compare costs across incoterms',
+            icon: Calculator,
+            href: '/dashboard/tools/incoterms',
+            color: 'bg-blue-50 text-blue-600 border-blue-100'
+        },
+        {
+            title: 'HS Lookup',
+            description: 'Search tariff codes & duties',
+            icon: Search,
+            href: '/dashboard/workspace/hs-codes',
+            color: 'bg-green-50 text-green-600 border-green-100'
+        },
+        {
+            title: 'Margin Checker',
+            description: 'Calculate profit margins',
+            icon: Percent,
+            href: '/dashboard/tools/margin',
+            color: 'bg-purple-50 text-purple-600 border-purple-100'
+        },
+        {
+            title: 'Document Checklist',
+            description: 'Export compliance checklist',
+            icon: FileText,
+            href: '/dashboard/workspace/documents',
+            color: 'bg-amber-50 text-amber-600 border-amber-100'
+        }
+    ];
+
+    const showUpgradeCTA = hsLookups > maxHsLookups * 0.7 || savedShipments >= maxShipments;
 
     return (
-        <div className='p-6 lg:p-8'>
-            {/* Welcome Header */}
-            <div className='mb-8'>
-                <h1 className='mb-2 text-3xl font-bold text-blue-900'>
-                    Welcome, {userProfile?.contact_person || 'Importer'}! 🌍
-                </h1>
-                <p className='text-slate-600'>Source authentic Ethiopian products directly from verified exporters</p>
-            </div>
-
-            {/* Quick Stats Row */}
-            <div className='mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4'>
-                <ImporterMetricCard
-                    title='Saved Products'
-                    value='24 items'
-                    change='+3 this week'
-                    icon={Heart}
-                    trend='up'
-                    description='From 8 exporters'
-                />
-
-                <ImporterMetricCard
-                    title='Active Orders'
-                    value='3 orders'
-                    change='1 in transit'
-                    icon={ShoppingCart}
-                    trend='up'
-                    description='$18,500 value'
-                />
-
-                <ImporterMetricCard
-                    title='Cost Savings'
-                    value='$3,200'
-                    change='vs. traditional'
-                    icon={DollarSign}
-                    trend='up'
-                    description='Direct sourcing benefit'
-                />
-
-                <ImporterMetricCard
-                    title='Trust Score'
-                    value='92/100'
-                    change='+5 points'
-                    icon={TrendingUp}
-                    trend='up'
-                    description='Verified importer'
-                />
-            </div>
-
-            {/* My Workspace Section */}
-            <div className='mb-8 grid grid-cols-1 gap-6 lg:grid-cols-3'>
-                {/* Saved Sourcing Scenarios */}
-                <Card className='lg:col-span-2'>
-                    <CardHeader>
-                        <div className='flex items-center justify-between'>
-                            <div>
-                                <CardTitle>My Workspace</CardTitle>
-                                <CardDescription>Saved sourcing scenarios & calculations</CardDescription>
-                            </div>
-                            <Button size='sm' variant='outline'>
-                                <Plus className='mr-2 h-4 w-4' />
-                                New Scenario
-                            </Button>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='space-y-4'>
-                            {/* Saved Calculations */}
-                            <div className='flex items-center justify-between rounded-lg bg-slate-50 p-3'>
-                                <div className='flex items-center space-x-3'>
-                                    <div className='rounded bg-blue-100 p-2'>
-                                        <Calculator className='h-4 w-4 text-blue-600' />
-                                    </div>
-                                    <div>
-                                        <h4 className='font-medium'>Coffee ROI Analysis</h4>
-                                        <p className='text-sm text-slate-500'>Estimated 32% margin</p>
-                                    </div>
-                                </div>
-                                <div className='flex space-x-2'>
-                                    <Button size='sm' variant='ghost'>
-                                        <Eye className='h-4 w-4' />
-                                    </Button>
-                                    <Button size='sm' variant='ghost'>
-                                        <Download className='h-4 w-4' />
-                                    </Button>
-                                </div>
-                            </div>
-
-                            {/* Quick Landed Cost */}
-                            <div className='rounded-lg border border-emerald-100 bg-emerald-50 p-4'>
-                                <div className='mb-3 flex items-center justify-between'>
-                                    <h4 className='font-medium text-emerald-900'>Quick Landed Cost Preview</h4>
-                                    <Calculator className='h-4 w-4 text-emerald-600' />
-                                </div>
-                                <div className='grid grid-cols-3 gap-4 text-sm'>
-                                    <div>
-                                        <p className='text-slate-500'>From</p>
-                                        <p className='font-medium'>Addis Ababa</p>
-                                    </div>
-                                    <div>
-                                        <p className='text-slate-500'>To</p>
-                                        <p className='font-medium'>{userProfile?.country || 'Your Country'}</p>
-                                    </div>
-                                    <div>
-                                        <p className='text-slate-500'>Est. Total</p>
-                                        <p className='font-medium'>$8,750/TEU</p>
-                                    </div>
-                                </div>
-                                <Button size='sm' className='mt-3 w-full bg-emerald-600 hover:bg-emerald-700'>
-                                    Run Detailed Analysis
-                                </Button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Import Checklist */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Import Checklist</CardTitle>
-                        <CardDescription>EUDR & Import Requirements</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='space-y-3'>
-                            {[
-                                { name: 'Import License', status: 'completed', icon: CheckCircle },
-                                { name: 'EUDR Due Diligence', status: 'pending', icon: AlertCircle },
-                                { name: 'Customs Documentation', status: 'completed', icon: CheckCircle },
-                                { name: 'Quality Certificates', status: 'pending', icon: AlertCircle },
-                                { name: 'Payment Terms', status: 'completed', icon: CheckCircle }
-                            ].map((doc, index) => (
-                                <div key={index} className='flex items-center justify-between'>
-                                    <div className='flex items-center space-x-3'>
-                                        <doc.icon
-                                            className={`h-4 w-4 ${
-                                                doc.status === 'completed' ? 'text-emerald-600' : 'text-amber-600'
-                                            }`}
-                                        />
-                                        <span className='text-sm'>{doc.name}</span>
-                                    </div>
-                                    <span
-                                        className={`rounded-full px-2 py-1 text-xs ${
-                                            doc.status === 'completed'
-                                                ? 'bg-emerald-100 text-emerald-700'
-                                                : 'bg-amber-100 text-amber-700'
-                                        }`}>
-                                        {doc.status}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                        <Button variant='outline' className='mt-4 w-full'>
-                            <Download className='mr-2 h-4 w-4' />
-                            Download Import Guide
-                        </Button>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Recommended Products */}
-            <Card className='mb-8'>
-                <CardHeader>
-                    <div className='flex items-center justify-between'>
-                        <div>
-                            <CardTitle>Recommended Ethiopian Products</CardTitle>
-                            <CardDescription>Based on your sourcing history</CardDescription>
-                        </div>
-                        <Button size='sm' variant='outline'>
-                            <Filter className='mr-2 h-4 w-4' />
-                            Filter
-                        </Button>
-                    </div>
-                </CardHeader>
-                <CardContent>
-                    <div className='grid grid-cols-1 gap-6 md:grid-cols-3'>
-                        {[
-                            {
-                                name: 'Yirgacheffe Coffee',
-                                grade: 'Grade 1',
-                                exporter: 'EthioGrow Farms',
-                                price: '$8.50/kg',
-                                rating: 4.9,
-                                moq: '100kg',
-                                location: 'Sidama, Ethiopia',
-                                verified: true
-                            },
-                            {
-                                name: 'White Sesame Seeds',
-                                grade: '99.9% Purity',
-                                exporter: 'AgriExport Co.',
-                                price: '$3.20/kg',
-                                rating: 4.7,
-                                moq: '500kg',
-                                location: 'Gondar, Ethiopia',
-                                verified: true
-                            },
-                            {
-                                name: 'Raw Forest Honey',
-                                grade: 'Organic',
-                                exporter: 'BeeEthiopia',
-                                price: '$12.00/kg',
-                                rating: 4.8,
-                                moq: '50kg',
-                                location: 'Oromia, Ethiopia',
-                                verified: true
-                            }
-                        ].map((product, index) => (
-                            <div
-                                key={index}
-                                className='rounded-xl border border-slate-200 p-4 transition-all hover:shadow-lg'>
-                                <div className='mb-3 flex items-start justify-between'>
-                                    <div className='flex items-center space-x-3'>
-                                        <div className='rounded-lg bg-emerald-100 p-2'>
-                                            <Coffee className='h-5 w-5 text-emerald-600' />
-                                        </div>
-                                        <div>
-                                            <h4 className='font-bold text-slate-900'>{product.name}</h4>
-                                            <p className='text-sm text-slate-600'>{product.grade}</p>
-                                        </div>
-                                    </div>
-                                    {product.verified && (
-                                        <span className='rounded-full bg-emerald-100 px-2 py-1 text-xs text-emerald-700'>
-                                            Verified ✓
-                                        </span>
-                                    )}
-                                </div>
-
-                                <div className='mb-4 space-y-2'>
-                                    <div className='flex items-center text-sm'>
-                                        <Users className='mr-2 h-4 w-4 text-slate-400' />
-                                        <span>{product.exporter}</span>
-                                    </div>
-                                    <div className='flex items-center text-sm'>
-                                        <MapPin className='mr-2 h-4 w-4 text-slate-400' />
-                                        <span>{product.location}</span>
-                                    </div>
-                                    <div className='flex items-center text-sm'>
-                                        <Package className='mr-2 h-4 w-4 text-slate-400' />
-                                        <span>MOQ: {product.moq}</span>
-                                    </div>
-                                </div>
-
-                                <div className='mb-4 flex items-center justify-between'>
-                                    <div>
-                                        <div className='text-2xl font-bold text-emerald-700'>{product.price}</div>
-                                        <div className='flex items-center'>
-                                            <Star className='h-4 w-4 fill-current text-yellow-500' />
-                                            <span className='ml-1 text-sm text-slate-600'>{product.rating}/5.0</span>
-                                        </div>
-                                    </div>
-                                    <Button size='sm' className='bg-emerald-600 hover:bg-emerald-700'>
-                                        <Eye className='mr-2 h-4 w-4' />
-                                        View Details
-                                    </Button>
-                                </div>
-
-                                <div className='flex space-x-2'>
-                                    <Button variant='outline' size='sm' className='flex-1'>
-                                        <MessageSquare className='mr-2 h-4 w-4' />
-                                        Contact
-                                    </Button>
-                                    <Button variant='outline' size='sm' className='flex-1'>
-                                        <Heart className='mr-2 h-4 w-4' />
-                                        Save
-                                    </Button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </CardContent>
-            </Card>
-
-            {/* Market Insights Section */}
-            <div className='mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2'>
-                {/* ECX Prices */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>ECX Market Prices</CardTitle>
-                        <CardDescription>Real-time Ethiopian commodity prices</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='space-y-4'>
-                            {[
-                                {
-                                    commodity: 'Coffee (Yirgacheffe)',
-                                    price: 'ETB 450/kg',
-                                    change: '+3.2%',
-                                    demand: 'High'
-                                },
-                                { commodity: 'Sesame Seeds', price: 'ETB 185/kg', change: '+1.5%', demand: 'Medium' },
-                                { commodity: 'Chickpeas', price: 'ETB 120/kg', change: '-0.8%', demand: 'Low' },
-                                { commodity: 'Lentils', price: 'ETB 95/kg', change: '+2.1%', demand: 'High' }
-                            ].map((item, index) => (
-                                <div
-                                    key={index}
-                                    className='flex items-center justify-between rounded-lg p-3 hover:bg-slate-50'>
-                                    <div>
-                                        <h4 className='font-medium'>{item.commodity}</h4>
-                                        <p className='text-sm text-slate-500'>Demand: {item.demand}</p>
-                                    </div>
-                                    <div className='text-right'>
-                                        <p className='font-bold'>{item.price}</p>
-                                        <p
-                                            className={`text-sm ${item.change.startsWith('+') ? 'text-emerald-600' : 'text-red-600'}`}>
-                                            {item.change}
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className='mt-4 border-t border-slate-100 pt-4'>
-                            <div className='flex items-center text-sm text-slate-500'>
-                                <Clock className='mr-2 h-4 w-4' />
-                                Updated: Today, 11:45 AM EAT
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                {/* Sourcing Tools */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Sourcing Tools</CardTitle>
-                        <CardDescription>Free tools for smart buying</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                        <div className='space-y-4'>
-                            <div className='cursor-pointer rounded-lg border border-slate-200 p-4 hover:bg-slate-50'>
-                                <div className='mb-2 flex items-center justify-between'>
-                                    <div className='flex items-center'>
-                                        <Calculator className='mr-3 h-5 w-5 text-blue-600' />
-                                        <h4 className='font-medium'>Incoterm Calculator</h4>
-                                    </div>
-                                    <span className='rounded bg-blue-100 px-2 py-1 text-xs text-blue-700'>Free</span>
-                                </div>
-                                <p className='text-sm text-slate-600'>Compare FOB vs CIF costs for Ethiopian exports</p>
-                            </div>
-
-                            <div className='cursor-pointer rounded-lg border border-slate-200 p-4 hover:bg-slate-50'>
-                                <div className='mb-2 flex items-center justify-between'>
-                                    <div className='flex items-center'>
-                                        <Search className='mr-3 h-5 w-5 text-emerald-600' />
-                                        <h4 className='font-medium'>HS Code Finder</h4>
-                                    </div>
-                                    <span className='rounded bg-emerald-100 px-2 py-1 text-xs text-emerald-700'>
-                                        15 left
-                                    </span>
-                                </div>
-                                <p className='text-sm text-slate-600'>20 free lookups per month</p>
-                            </div>
-
-                            <div className='cursor-pointer rounded-lg border border-slate-200 p-4 hover:bg-slate-50'>
-                                <div className='mb-2 flex items-center justify-between'>
-                                    <div className='flex items-center'>
-                                        <Users className='mr-3 h-5 w-5 text-purple-600' />
-                                        <h4 className='font-medium'>Exporter Directory</h4>
-                                    </div>
-                                    <span className='rounded bg-purple-100 px-2 py-1 text-xs text-purple-700'>
-                                        Free
-                                    </span>
-                                </div>
-                                <p className='text-sm text-slate-600'>Browse 200+ verified Ethiopian exporters</p>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Upgrade CTA */}
-            <div className='rounded-xl bg-linear-to-r from-blue-600 to-indigo-600 p-6 text-white'>
-                <div className='flex flex-col items-center justify-between lg:flex-row'>
-                    <div className='mb-4 lg:mb-0'>
-                        <h3 className='mb-2 text-xl font-bold'>Unlock Premium Sourcing</h3>
-                        <p className='text-blue-100'>
-                            Upgrade to see exporter contact details, advanced analytics, and AI matching.
-                        </p>
-                    </div>
-                    <Button className='bg-white text-blue-700 hover:bg-blue-50'>
-                        <TrendingUp className='mr-2 h-4 w-4' />
-                        View Premium Features
-                    </Button>
+        <div className='min-h-screen bg-gray-50' style={{ fontFamily: 'Helvetica, Arial, sans-serif' }}>
+            <div className='mx-auto max-w-7xl'>
+                {/* Welcome Header */}
+                <div className='mb-6 pt-2'>
+                    <h1 className='text-2xl font-medium text-gray-900'>Welcome back, John</h1>
+                    <p className='mt-1 text-sm text-gray-500'>Your daily trade dashboard</p>
                 </div>
+
+                {/* 1. TOP SIGNAL BAR */}
+                <div className='mb-6'>
+                    <div className='grid grid-cols-1 gap-3 md:grid-cols-3'>
+                        {/* ECX Coffee Price */}
+                        <Link
+                            href='/dashboard/markets/ecx'
+                            className='rounded-lg border p-4 transition-all hover:border-blue-300 hover:shadow-sm'
+                            style={{ backgroundColor: '#023b52', borderColor: '#0a5468' }}>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs' style={{ color: '#8fa3b0' }}>
+                                        ECX Coffee
+                                    </p>
+                                    <p className='text-lg font-medium' style={{ color: '#ffffff' }}>
+                                        3,450 ETB/kg
+                                    </p>
+                                    <div className='mt-1 flex items-center'>
+                                        <TrendingUp className='mr-1 h-3 w-3' style={{ color: '#4ade80' }} />
+                                        <span className='text-xs' style={{ color: '#4ade80' }}>
+                                            +2.4% today
+                                        </span>
+                                    </div>
+                                </div>
+                                <BarChart3 className='h-5 w-5' style={{ color: '#60a5fa' }} />
+                            </div>
+                        </Link>
+
+                        {/* USD/ETB Rate */}
+                        <Link
+                            href='/dashboard/markets/fx'
+                            className='rounded-lg border p-4 transition-all hover:border-blue-300 hover:shadow-sm'
+                            style={{ backgroundColor: '#023b52', borderColor: '#0a5468' }}>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs' style={{ color: '#8fa3b0' }}>
+                                        USD/ETB
+                                    </p>
+                                    <p className='text-lg font-medium' style={{ color: '#ffffff' }}>
+                                        57.25
+                                    </p>
+                                    <div className='mt-1 flex items-center'>
+                                        <TrendingUp className='mr-1 h-3 w-3' style={{ color: '#4ade80' }} />
+                                        <span className='text-xs' style={{ color: '#4ade80' }}>
+                                            +0.15
+                                        </span>
+                                    </div>
+                                </div>
+                                <Globe className='h-5 w-5' style={{ color: '#4ade80' }} />
+                            </div>
+                        </Link>
+
+                        {/* Active Alerts */}
+                        <Link
+                            href='/dashboard/notifications'
+                            className='rounded-lg border p-4 transition-all hover:border-blue-300 hover:shadow-sm'
+                            style={{ backgroundColor: '#023b52', borderColor: '#0a5468' }}>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs' style={{ color: '#8fa3b0' }}>
+                                        Active Alerts
+                                    </p>
+                                    <p className='text-lg font-medium' style={{ color: '#ffffff' }}>
+                                        {fxAlerts} active
+                                    </p>
+                                    <p className='mt-1 text-xs' style={{ color: '#8fa3b0' }}>
+                                        Price & FX triggers
+                                    </p>
+                                </div>
+                                <AlertCircle className='h-5 w-5' style={{ color: '#fbbf24' }} />
+                            </div>
+                        </Link>
+                    </div>
+                </div>
+
+                {/* 2. KPI SNAPSHOT */}
+                <div className='mb-8'>
+                    <div className='grid grid-cols-2 gap-3 md:grid-cols-4'>
+                        {/* Saved Shipments */}
+                        <Link
+                            href='/dashboard/workspace/shipments'
+                            className='rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-sm'>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs text-gray-500'>Saved Shipments</p>
+                                    <p className='text-lg font-medium text-gray-900'>
+                                        {savedShipments} / {maxShipments}
+                                    </p>
+                                </div>
+                                <Package className='h-5 w-5 text-blue-500' />
+                            </div>
+                            {savedShipments >= maxShipments && (
+                                <div className='mt-2'>
+                                    <span className='inline-flex items-center rounded bg-amber-50 px-2 py-1 text-xs text-amber-600'>
+                                        <AlertCircle className='mr-1 h-3 w-3' />
+                                        Max reached
+                                    </span>
+                                </div>
+                            )}
+                        </Link>
+
+                        {/* HS Lookups */}
+                        <Link
+                            href='/dashboard/workspace/hs-codes'
+                            className='rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-sm'>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs text-gray-500'>HS Lookups</p>
+                                    <p className='text-lg font-medium text-gray-900'>
+                                        {hsLookups} / {maxHsLookups}
+                                    </p>
+                                    <div className='mt-2 h-1.5 w-full rounded-full bg-gray-200'>
+                                        <div
+                                            className='h-1.5 rounded-full bg-green-500'
+                                            style={{ width: `${(hsLookups / maxHsLookups) * 100}%` }}></div>
+                                    </div>
+                                </div>
+                                <Search className='h-5 w-5 text-green-500' />
+                            </div>
+                        </Link>
+
+                        {/* FX Alerts */}
+                        <Link
+                            href='/dashboard/markets/fx'
+                            className='rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-blue-300 hover:shadow-sm'>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs text-gray-500'>FX Alerts</p>
+                                    <p className='text-lg font-medium text-gray-900'>{fxAlerts}</p>
+                                    <p className='mt-1 text-xs text-gray-500'>Price triggers</p>
+                                </div>
+                                <AlertCircle className='h-5 w-5 text-purple-500' />
+                            </div>
+                        </Link>
+
+                        {/* Plan Status */}
+                        <div className='rounded-lg border border-gray-200 bg-white p-4'>
+                            <div className='flex items-center justify-between'>
+                                <div>
+                                    <p className='mb-1 text-xs text-gray-500'>Plan</p>
+                                    <p className='text-lg font-medium text-gray-900'>Free</p>
+                                    <p className='mt-1 text-xs text-gray-500'>Basic features</p>
+                                </div>
+                                <Shield className='h-5 w-5 text-gray-400' />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='mb-8 space-y-6'>
+                    {/* 3. LEFT: LIVE MARKETS PREVIEW */}
+                    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white'>
+                        <div className='border-b border-gray-200 p-4'>
+                            <div className='flex items-center justify-between'>
+                                <h2 className='font-medium text-gray-900'>ECX Markets</h2>
+                                <Link
+                                    href='/dashboard/markets/ecx'
+                                    className='flex items-center text-sm text-blue-600 hover:text-blue-700'>
+                                    View full market
+                                    <ArrowUpRight className='ml-1 h-3 w-3' />
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className='p-4'>
+                            <table className='w-full'>
+                                <thead>
+                                    <tr className='border-b border-gray-100 text-xs text-gray-500'>
+                                        <th className='pb-2 text-left font-medium'>Commodity</th>
+                                        <th className='pb-2 text-left font-medium'>Price</th>
+                                        <th className='pb-2 text-left font-medium'>Change</th>
+                                        <th className='pb-2 text-left font-medium'></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ecxPrices.map((item, index) => (
+                                        <tr key={index} className='border-b border-gray-50 last:border-0'>
+                                            <td className='py-3'>
+                                                <span className='text-sm text-gray-900'>{item.commodity}</span>
+                                            </td>
+                                            <td className='py-3'>
+                                                <span className='text-sm font-medium text-gray-900'>{item.price}</span>
+                                            </td>
+                                            <td className='py-3'>
+                                                <div className='flex items-center'>
+                                                    {item.isUp ? (
+                                                        <TrendingUp className='mr-1 h-3 w-3 text-green-500' />
+                                                    ) : (
+                                                        <TrendingDown className='mr-1 h-3 w-3 text-red-500' />
+                                                    )}
+                                                    <span
+                                                        className={`text-sm ${item.isUp ? 'text-green-600' : 'text-red-600'}`}>
+                                                        {item.change}
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td className='py-3'>
+                                                <button className='rounded p-1 hover:bg-gray-100'>
+                                                    <Star
+                                                        className={`h-4 w-4 ${item.isSaved ? 'fill-yellow-500 text-yellow-500' : 'text-gray-300'}`}
+                                                    />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    {/* 3. RIGHT: FX WATCHLIST PREVIEW */}
+                    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white'>
+                        <div className='border-b border-gray-200 p-4'>
+                            <div className='flex items-center justify-between'>
+                                <h2 className='font-medium text-gray-900'>FX Watchlist</h2>
+                                <Link
+                                    href='/dashboard/markets/fx'
+                                    className='flex items-center text-sm text-blue-600 hover:text-blue-700'>
+                                    Manage FX
+                                    <ArrowUpRight className='ml-1 h-3 w-3' />
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className='p-4'>
+                            <div className='space-y-4'>
+                                {fxPairs.map((pair, index) => (
+                                    <div
+                                        key={index}
+                                        className='flex items-center justify-between rounded-lg bg-gray-50 p-3'>
+                                        <div>
+                                            <p className='font-medium text-gray-900'>{pair.pair}</p>
+                                            <p className='mt-0.5 text-xs text-gray-500'>Spot rate</p>
+                                        </div>
+                                        <div className='text-right'>
+                                            <p className='text-lg font-medium text-gray-900'>{pair.rate}</p>
+                                            <div className='mt-0.5 flex items-center justify-end'>
+                                                <TrendingUp className='mr-1 h-3 w-3 text-green-500' />
+                                                <span className='text-xs text-green-600'>{pair.change}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 4. MY WORKSPACE */}
+                <div className='mb-8 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+                    {/* Saved Shipments */}
+                    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white'>
+                        <div className='border-b border-gray-200 p-4'>
+                            <div className='flex items-center justify-between'>
+                                <h2 className='font-medium text-gray-900'>Saved Shipments</h2>
+                                <Link
+                                    href='/dashboard/workspace/shipments'
+                                    className='flex items-center text-sm text-blue-600 hover:text-blue-700'>
+                                    View all
+                                    <ArrowUpRight className='ml-1 h-3 w-3' />
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className='p-4'>
+                            <div className='space-y-4'>
+                                {savedShipmentsList.map((shipment) => (
+                                    <div
+                                        key={shipment.id}
+                                        className='rounded-lg border border-gray-100 p-3 transition-colors hover:border-blue-200'>
+                                        <div className='flex items-start justify-between'>
+                                            <div>
+                                                <p className='font-medium text-gray-900'>{shipment.route}</p>
+                                                <div className='mt-2 flex items-center space-x-4'>
+                                                    <span className='rounded bg-gray-100 px-2 py-1 text-xs text-gray-600'>
+                                                        {shipment.incoterm}
+                                                    </span>
+                                                    <span className='text-xs text-gray-500'>{shipment.commodity}</span>
+                                                </div>
+                                            </div>
+                                            <div className='text-right'>
+                                                <p className='font-medium text-gray-900'>{shipment.price}</p>
+                                                <p className='mt-0.5 text-xs text-gray-500'>Total cost</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Saved HS Codes */}
+                    <div className='overflow-hidden rounded-lg border border-gray-200 bg-white'>
+                        <div className='border-b border-gray-200 p-4'>
+                            <div className='flex items-center justify-between'>
+                                <h2 className='font-medium text-gray-900'>Saved HS Codes</h2>
+                                <Link
+                                    href='/dashboard/workspace/hs-codes'
+                                    className='flex items-center text-sm text-blue-600 hover:text-blue-700'>
+                                    View all
+                                    <ArrowUpRight className='ml-1 h-3 w-3' />
+                                </Link>
+                            </div>
+                        </div>
+
+                        <div className='p-4'>
+                            <div className='space-y-4'>
+                                {savedHsCodes.map((hs, index) => (
+                                    <div
+                                        key={index}
+                                        className='rounded-lg border border-gray-100 p-3 transition-colors hover:border-blue-200'>
+                                        <div className='flex items-start justify-between'>
+                                            <div>
+                                                <p className='font-medium text-gray-900'>{hs.code}</p>
+                                                <p className='mt-1 text-sm text-gray-600'>{hs.description}</p>
+                                            </div>
+                                            <div className='text-right'>
+                                                <p
+                                                    className={`font-medium ${hs.duty === 'Free' ? 'text-green-600' : 'text-amber-600'}`}>
+                                                    {hs.duty}
+                                                </p>
+                                                <p className='mt-0.5 text-xs text-gray-500'>US duty</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* 5. ESSENTIAL TOOLS */}
+                <div className='mb-8'>
+                    <div className='mb-4 flex items-center justify-between'>
+                        <h2 className='font-medium text-gray-900'>Essential Tools</h2>
+                        <p className='text-sm text-gray-500'>Quick access to core features</p>
+                    </div>
+
+                    <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4'>
+                        {essentialTools.map((tool, index) => {
+                            const Icon = tool.icon;
+
+                            return (
+                                <Link
+                                    key={index}
+                                    href={tool.href}
+                                    className={`rounded-lg border bg-white p-4 transition-all hover:shadow-sm ${tool.color} hover:border-current`}>
+                                    <div className='flex items-start justify-between'>
+                                        <div>
+                                            <Icon className='mb-3 h-5 w-5' />
+                                            <h3 className='mb-1 font-medium'>{tool.title}</h3>
+                                            <p className='text-sm text-gray-600'>{tool.description}</p>
+                                        </div>
+                                        <ArrowUpRight className='h-4 w-4' />
+                                    </div>
+                                    <div className='mt-4'>
+                                        <span className='text-sm font-medium'>Open tool →</span>
+                                    </div>
+                                </Link>
+                            );
+                        })}
+                    </div>
+                </div>
+
+                {/* 6. UPGRADE CTA (Conditional) */}
+                {showUpgradeCTA && (
+                    <div className='mb-8 rounded-lg border border-blue-200 bg-linear-to-r from-blue-50 to-indigo-50 p-6'>
+                        <div className='flex flex-col items-center justify-between md:flex-row'>
+                            <div className='mb-4 md:mb-0'>
+                                <div className='mb-2 flex items-center'>
+                                    <Zap className='mr-2 h-5 w-5 text-blue-600' />
+                                    <h3 className='font-medium text-gray-900'>Unlock Pro Features</h3>
+                                </div>
+                                <p className='max-w-md text-sm text-gray-600'>
+                                    You're getting the most out of the free plan! Upgrade to unlock unlimited HS
+                                    lookups, shipment scenarios, and advanced analytics.
+                                </p>
+                                <div className='mt-3 flex items-center space-x-4'>
+                                    <div className='flex items-center'>
+                                        <CheckCircle className='mr-2 h-4 w-4 text-green-500' />
+                                        <span className='text-sm text-gray-700'>Unlimited HS searches</span>
+                                    </div>
+                                    <div className='flex items-center'>
+                                        <CheckCircle className='mr-2 h-4 w-4 text-green-500' />
+                                        <span className='text-sm text-gray-700'>Advanced analytics</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className='flex space-x-3'>
+                                <Link
+                                    href='/dashboard/billing'
+                                    className='rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700'>
+                                    View Pro Plans
+                                </Link>
+                                <button className='rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50'>
+                                    Learn More
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
