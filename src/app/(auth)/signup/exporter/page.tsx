@@ -191,7 +191,7 @@ export default function ExporterSignupPage() {
                                         <Building className='h-6 w-6 text-emerald-600' />
                                     </div>
                                     <div>
-                                        <h2 className='text-xl font-bold text-gray-900'>Company Information</h2>
+                                        <h2 className='text-xl font-bold text-gray-900'>Provide Company Information</h2>
                                         <p className='text-sm text-gray-600'>Login credentials and basic details</p>
                                     </div>
                                 </div>

@@ -134,7 +134,7 @@ const CurrencyExchange = () => {
         try {
             const { data, error } = await supabase
                 .from('fx_rates')
-                .select('currency,rate,change_percentage,last_updated')
+                .select('*')
                 .in('currency', ['USD', 'EUR', 'GBP', 'ETB', 'CNY', 'AED'])
                 .order('updated_at', { ascending: false });
 
