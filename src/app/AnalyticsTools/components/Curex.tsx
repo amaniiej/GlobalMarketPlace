@@ -214,7 +214,7 @@ const CurrencyExchange = () => {
         };
     }, [fetchRatesFromSupabase]);
 
-    // ✅ REALTIME SUBSCRIPTION - Updates ONLY rate + change%
+    // ✅ REALTIME SUBSCRIPTION FIXED
     useEffect(() => {
         if (!supabaseUrl || !supabaseAnonKey) return;
 
@@ -223,37 +223,46 @@ const CurrencyExchange = () => {
             .on(
                 'postgres_changes',
                 {
-                    event: 'INSERT,UPDATE',
+                    event: '*', // Listen to all changes
                     schema: 'public',
-                    table: 'fx_rates',
-                    filter: 'currency=in.(USD,EUR,GBP,ETB,CNY,AED)'
+                    table: 'fx_rates'
                 },
                 (payload) => {
-                    console.log('🟢 LIVE UPDATE:', payload.new);
+                    const newRate = payload.new as FxRate;
 
-                    // Update ONLY matching currency (rate + change%)
+                    // Filter locally because "in" operator is not supported in Realtime filters
+                    const trackedCurrencies = ['USD', 'EUR', 'GBP', 'ETB', 'CNY', 'AED'];
+                    if (!trackedCurrencies.includes(newRate.currency)) return;
+
+                    console.log('🟢 LIVE UPDATE RECEIVED:', newRate);
+
+                    const changePercent = parseFloat(newRate.change_percentage?.replace('%', '') || '0') || 0;
+                    const trend: 'up' | 'down' | 'stable' =
+                        changePercent > 0.1 ? 'up' : changePercent < -0.1 ? 'down' : 'stable';
+
+                    const updatedCurrencyData = {
+                        rate: Number(newRate.rate),
+                        changePercent,
+                        trend,
+                        lastUpdated: 'Live'
+                    };
+
+                    // 1. Update the main list
                     setCurrencies((prev) =>
-                        prev.map((currency) => {
-                            if (currency.code === payload.new.currency) {
-                                const changePercent = parseFloat(payload.new.change_percentage.replace('%', '')) || 0;
-                                const trend: 'up' | 'down' | 'stable' =
-                                    changePercent > 0.1 ? 'up' : changePercent < -0.1 ? 'down' : 'stable';
+                        prev.map((c) => (c.code === newRate.currency ? { ...c, ...updatedCurrencyData } : c))
+                    );
 
-                                return {
-                                    ...currency,
-                                    rate: Number(payload.new.rate),
-                                    changePercent,
-                                    trend,
-                                    lastUpdated: 'Live'
-                                };
-                            }
-
-                            return currency;
-                        })
+                    // 2. Sync the converter selections so the calculation updates immediately
+                    setFromCurrency((prev) =>
+                        prev.code === newRate.currency ? { ...prev, ...updatedCurrencyData } : prev
+                    );
+                    setToCurrency((prev) =>
+                        prev.code === newRate.currency ? { ...prev, ...updatedCurrencyData } : prev
                     );
                 }
             )
             .subscribe((status) => {
+                console.log('📡 Subscription status:', status);
                 setSubscriptionStatus(status === 'SUBSCRIBED' ? 'connected' : 'disconnected');
             });
 
